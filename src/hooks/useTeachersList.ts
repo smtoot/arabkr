@@ -2,9 +2,11 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Teacher, TeacherFilters, SortOption, TeacherSpecialty } from '@/types/teacher';
-import { fetchTeachers, generateMockTeachers } from '@/services/api/teacherService';
+import { fetchTeachers } from '@/services/api/teacherApi';
+import { useToast } from '@/hooks/use-toast';
 
 export function useTeachersList(pageSize: number = 9) {
+  const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [totalTeachers, setTotalTeachers] = useState(0);
@@ -46,44 +48,16 @@ export function useTeachersList(pageSize: number = 9) {
   const loadTeachers = async (page: number, filters: TeacherFilters, sort: SortOption) => {
     setLoading(true);
     try {
-      // Uncomment this when we want to use real data
-      // const { teachers: fetchedTeachers, count } = await fetchTeachers(page, pageSize, filters, sort);
-      // setTeachers(fetchedTeachers);
-      // setTotalTeachers(count || 0);
-      
-      // For now, use mock data
-      const mockTeachers = generateMockTeachers(30);
-      
-      // Apply filters to mock data (simplified)
-      let filteredTeachers = mockTeachers;
-      if (filters.minPrice !== undefined) {
-        filteredTeachers = filteredTeachers.filter(t => t.hourly_rate >= (filters.minPrice || 0));
-      }
-      if (filters.maxPrice !== undefined) {
-        filteredTeachers = filteredTeachers.filter(t => t.hourly_rate <= (filters.maxPrice || 1000));
-      }
-      if (filters.minRating !== undefined) {
-        filteredTeachers = filteredTeachers.filter(t => t.avg_rating >= (filters.minRating || 0));
-      }
-      
-      // Sort mock data
-      if (sort === 'rating') {
-        filteredTeachers.sort((a, b) => b.avg_rating - a.avg_rating);
-      } else if (sort === 'price_low') {
-        filteredTeachers.sort((a, b) => a.hourly_rate - b.hourly_rate);
-      } else if (sort === 'price_high') {
-        filteredTeachers.sort((a, b) => b.hourly_rate - a.hourly_rate);
-      } else if (sort === 'experience') {
-        filteredTeachers.sort((a, b) => (b.years_experience || 0) - (a.years_experience || 0));
-      }
-      
-      // Paginate
-      const start = (page - 1) * pageSize;
-      const end = start + pageSize;
-      setTeachers(filteredTeachers.slice(start, end));
-      setTotalTeachers(filteredTeachers.length);
+      const { teachers: fetchedTeachers, count } = await fetchTeachers(page, pageSize, filters, sort);
+      setTeachers(fetchedTeachers);
+      setTotalTeachers(count || 0);
     } catch (error) {
       console.error('Error loading teachers:', error);
+      toast({
+        title: "خطأ في تحميل قائمة المعلمين",
+        description: "يرجى المحاولة مرة أخرى لاحقًا",
+        variant: "destructive",
+      });
       setTeachers([]);
     } finally {
       setLoading(false);

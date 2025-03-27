@@ -57,3 +57,28 @@ export const generateMockReviews = (teacherId: string, count: number): Review[] 
     }
   }));
 };
+
+// Data mapping helpers for real data
+export const mapSpecialtyToArabic = (specialty: TeacherSpecialty): string => {
+  const specialtyMap: Record<TeacherSpecialty, string> = {
+    'conversation': 'محادثة',
+    'grammar': 'قواعد',
+    'vocabulary': 'مفردات',
+    'reading': 'قراءة',
+    'writing': 'كتابة',
+    'business_korean': 'كورية الأعمال',
+    'exam_preparation': 'تحضير الامتحانات'
+  };
+  
+  return specialtyMap[specialty] || specialty;
+};
+
+export const mapLanguageToArabic = (language: string): string => {
+  const languageMap: Record<string, string> = {
+    '한국어': 'الكورية',
+    'العربية': 'العربية',
+    'English': 'الإنجليزية'
+  };
+  
+  return languageMap[language] || language;
+};

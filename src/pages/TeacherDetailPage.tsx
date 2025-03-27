@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -8,36 +8,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Star, Book, Calendar, MessageSquare, Video, Clock, ArrowRight } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import Layout from '@/components/Layout';
 import ReviewsList from '@/components/teachers/ReviewsList';
 import AvailabilityCalendar from '@/components/teachers/AvailabilityCalendar';
-import { 
-  fetchTeacherById, 
-  fetchTeacherReviews, 
-  generateMockTeachers, 
-  generateMockReviews 
-} from '@/services/api/teacherService';
-import { Teacher, Review, TeacherSpecialty } from '@/types/teacher';
-
-// Map specialties to Arabic
-const specialtyLabels: Record<TeacherSpecialty, string> = {
-  'conversation': 'محادثة',
-  'grammar': 'قواعد',
-  'vocabulary': 'مفردات',
-  'reading': 'قراءة',
-  'writing': 'كتابة',
-  'business_korean': 'كورية الأعمال',
-  'exam_preparation': 'تحضير الامتحانات'
-};
-
-const languageLabels: Record<string, string> = {
-  '한국어': 'الكورية',
-  'العربية': 'العربية',
-  'English': 'الإنجليزية'
-};
+import { fetchTeacherById, fetchTeacherReviews } from '@/services/api/teacherService';
+import { mapSpecialtyToArabic, mapLanguageToArabic } from '@/services/api/mockTeacherData';
+import { Teacher, Review } from '@/types/teacher';
 
 const TeacherDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [teacher, setTeacher] = useState<Teacher | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,12 +29,19 @@ const TeacherDetailPage: React.FC = () => {
     const loadTeacher = async () => {
       setLoading(true);
       try {
-        // Use mock data for now
-        // const data = await fetchTeacherById(id || '');
-        const mockTeachers = generateMockTeachers(1);
-        setTeacher(mockTeachers[0]);
+        if (!id) {
+          throw new Error('Teacher ID is undefined');
+        }
+        const data = await fetchTeacherById(id);
+        setTeacher(data);
       } catch (error) {
         console.error('Error loading teacher:', error);
+        toast({
+          title: "خطأ في تحميل بيانات المعلم",
+          description: "يرجى المحاولة مرة أخرى لاحقًا",
+          variant: "destructive",
+        });
+        navigate('/teachers');
       } finally {
         setLoading(false);
       }
@@ -61,12 +50,18 @@ const TeacherDetailPage: React.FC = () => {
     const loadReviews = async () => {
       setReviewsLoading(true);
       try {
-        // Use mock data for now
-        // const data = await fetchTeacherReviews(id || '');
-        const mockReviewsData = generateMockReviews(id || '', 5);
-        setReviews(mockReviewsData);
+        if (!id) {
+          throw new Error('Teacher ID is undefined');
+        }
+        const data = await fetchTeacherReviews(id);
+        setReviews(data);
       } catch (error) {
         console.error('Error loading reviews:', error);
+        toast({
+          title: "خطأ في تحميل التقييمات",
+          description: "يرجى المحاولة مرة أخرى لاحقًا",
+          variant: "destructive",
+        });
       } finally {
         setReviewsLoading(false);
       }
@@ -76,7 +71,7 @@ const TeacherDetailPage: React.FC = () => {
       loadTeacher();
       loadReviews();
     }
-  }, [id]);
+  }, [id, navigate, toast]);
   
   if (loading) {
     return (
@@ -158,7 +153,7 @@ const TeacherDetailPage: React.FC = () => {
                 <div className="flex flex-wrap gap-2 mt-3">
                   {teacher.specialties && teacher.specialties.map((specialty, i) => (
                     <Badge key={i} className="bg-primary/10 text-primary hover:bg-primary/20">
-                      {specialtyLabels[specialty] || specialty}
+                      {mapSpecialtyToArabic(specialty)}
                     </Badge>
                   ))}
                 </div>
@@ -225,7 +220,7 @@ const TeacherDetailPage: React.FC = () => {
                       <div className="flex flex-wrap gap-2">
                         {teacher.languages_spoken.map((language, i) => (
                           <Badge key={i} variant="outline">
-                            {languageLabels[language] || language}
+                            {mapLanguageToArabic(language)}
                           </Badge>
                         ))}
                       </div>
@@ -275,8 +270,10 @@ const TeacherDetailPage: React.FC = () => {
                 </div>
               </CardContent>
               <CardFooter className="px-6 py-4 flex flex-col gap-3 border-t" dir="rtl">
-                <Button className="w-full" size="lg">
-                  حجز درس
+                <Button className="w-full" size="lg" asChild>
+                  <Link to={`/booking/${teacher.id}`}>
+                    حجز درس
+                  </Link>
                 </Button>
                 <Button variant="outline" className="w-full">
                   مراسلة المعلم

@@ -34,3 +34,69 @@ export async function fetchTeacherReviews(teacherId: string) {
 
   return reviews;
 }
+
+export async function createReview(review: {
+  teacher_id: string;
+  booking_id: string;
+  rating: number;
+  comment?: string;
+}) {
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+
+  if (userError) {
+    console.error('Error getting user:', userError);
+    throw userError;
+  }
+
+  const { data, error } = await supabase
+    .from('reviews')
+    .insert([{
+      ...review,
+      student_id: userData.user?.id,
+    }])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating review:', error);
+    throw error;
+  }
+
+  return data;
+}
+
+export async function updateReview(
+  reviewId: string,
+  updates: {
+    rating?: number;
+    comment?: string;
+  }
+) {
+  const { data, error } = await supabase
+    .from('reviews')
+    .update(updates)
+    .eq('id', reviewId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating review:', error);
+    throw error;
+  }
+
+  return data;
+}
+
+export async function deleteReview(reviewId: string) {
+  const { error } = await supabase
+    .from('reviews')
+    .delete()
+    .eq('id', reviewId);
+
+  if (error) {
+    console.error('Error deleting review:', error);
+    throw error;
+  }
+
+  return true;
+}
