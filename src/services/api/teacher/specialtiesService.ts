@@ -16,8 +16,10 @@ export async function fetchTeacherSpecialties(teacherId: string): Promise<Teache
       throw error;
     }
     
-    // Extract specialty values from the result and cast to TeacherSpecialty
-    return (data || []).map((item: any) => item.specialty as TeacherSpecialty);
+    // Cast data to an array and then extract specialty values and cast to TeacherSpecialty
+    // The executed SQL returns an array of objects with a specialty property
+    const jsonData = data as { specialty: string }[] || [];
+    return jsonData.map(item => item.specialty as TeacherSpecialty);
   } catch (error) {
     console.error('Error in fetchTeacherSpecialties:', error);
     throw error;

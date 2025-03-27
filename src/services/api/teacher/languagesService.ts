@@ -15,8 +15,10 @@ export async function fetchTeacherLanguages(teacherId: string): Promise<string[]
       throw error;
     }
     
-    // Extract language values from the result
-    return (data || []).map((item: any) => item.language);
+    // Cast data to an array and then extract language values
+    // The executed SQL returns an array of objects with a language property
+    const jsonData = data as { language: string }[] || [];
+    return jsonData.map(item => item.language);
   } catch (error) {
     console.error('Error in fetchTeacherLanguages:', error);
     throw error;
