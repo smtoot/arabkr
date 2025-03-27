@@ -32,16 +32,18 @@ export interface Conversation {
 // Fetch conversations for the current user
 export async function fetchConversations(): Promise<Conversation[]> {
   try {
+    // Since we're working with a view, we need to use the execute_sql function
     const { data, error } = await supabase
-      .from('conversations')
-      .select('*');
+      .rpc('execute_sql', {
+        query_text: "SELECT * FROM conversations"
+      });
 
     if (error) {
       console.error('Error fetching conversations:', error);
       throw error;
     }
     
-    return data || [];
+    return (data || []) as Conversation[];
   } catch (error) {
     console.error('Error in fetchConversations:', error);
     throw error;
@@ -51,10 +53,17 @@ export async function fetchConversations(): Promise<Conversation[]> {
 // Fetch messages between current user and another user
 export async function fetchMessages(otherUserId: string): Promise<Message[]> {
   try {
+    const { data: currentUser } = await supabase.auth.getUser();
+    
+    if (!currentUser.user) {
+      throw new Error('User not authenticated');
+    }
+    
     const { data, error } = await supabase
       .from('messages')
       .select('*')
-      .or(`sender_id.eq.${otherUserId},recipient_id.eq.${otherUserId}`)
+      .or(`sender_id.eq.${currentUser.user.id},recipient_id.eq.${currentUser.user.id}`)
+      .and(`(sender_id.eq.${otherUserId}),or(recipient_id.eq.${otherUserId})`)
       .order('created_at', { ascending: true });
 
     if (error) {
@@ -104,8 +113,11 @@ export async function sendMessage(
 // Mark messages from a specific sender as read
 export async function markMessagesAsRead(senderId: string): Promise<void> {
   try {
+    // We need to use the SQL function we created
     const { error } = await supabase
-      .rpc('mark_messages_as_read', { conversation_partner_id: senderId });
+      .rpc('execute_sql', {
+        query_text: `SELECT mark_messages_as_read('${senderId}')`
+      });
 
     if (error) {
       console.error('Error marking messages as read:', error);

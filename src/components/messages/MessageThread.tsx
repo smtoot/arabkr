@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { fetchMessages, markMessagesAsRead, subscribeToMessages, Message } from '@/services/api/messageService';
 import { format } from 'date-fns';
-import { arAR } from 'date-fns/locale';
+import { ar } from 'date-fns/locale';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Check, CheckCheck } from 'lucide-react';
 
@@ -111,7 +111,7 @@ export default function MessageThread({ userId, userName, userAvatar }: MessageT
               <div className="w-full border-t border-muted"></div>
             </div>
             <div className="relative px-4 bg-background text-xs font-medium text-muted-foreground">
-              {format(new Date(dateMessages[0].created_at), 'EEEE, d MMMM', { locale: arAR })}
+              {format(new Date(dateMessages[0].created_at), 'EEEE, d MMMM', { locale: ar })}
             </div>
           </div>
           
@@ -142,7 +142,7 @@ export default function MessageThread({ userId, userName, userAvatar }: MessageT
                   </div>
                   
                   <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                    <span>{format(new Date(message.created_at), 'h:mm a', { locale: arAR })}</span>
+                    <span>{format(new Date(message.created_at), 'h:mm a', { locale: ar })}</span>
                     {isMine && (
                       message.is_read ? <CheckCheck size={14} /> : <Check size={14} />
                     )}

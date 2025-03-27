@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { fetchConversations, Conversation } from '@/services/api/messageService';
 import { format } from 'date-fns';
-import { arAR } from 'date-fns/locale';
+import { ar } from 'date-fns/locale';
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -88,7 +88,7 @@ export default function ConversationList({ selectedUserId }: { selectedUserId?: 
               <div className="flex justify-between items-center mb-1">
                 <h4 className="font-medium text-sm truncate">{otherPersonName}</h4>
                 <span className="text-xs text-muted-foreground">
-                  {format(new Date(conversation.last_message_time), 'dd MMM', { locale: arAR })}
+                  {format(new Date(conversation.last_message_time), 'dd MMM', { locale: ar })}
                 </span>
               </div>
               <div className="flex justify-between items-center">
