@@ -16,6 +16,8 @@ import Verification from "./pages/auth/Verification";
 import Dashboard from "./pages/dashboard/Dashboard";
 import StudentDashboard from "./pages/dashboard/StudentDashboard";
 import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
+import TeachersPage from "./pages/TeachersPage";
+import TeacherDetailPage from "./pages/TeacherDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +36,10 @@ const App = () => (
             <Route path="/auth/reset-password" element={<ResetPassword />} />
             <Route path="/auth/update-password" element={<UpdatePassword />} />
             <Route path="/auth/verification" element={<Verification />} />
+            
+            {/* Teachers Browse Routes */}
+            <Route path="/teachers" element={<TeachersPage />} />
+            <Route path="/teachers/:id" element={<TeacherDetailPage />} />
             
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
