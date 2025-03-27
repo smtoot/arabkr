@@ -47,7 +47,6 @@ const Navbar = () => {
       
       fetchUnreadCount();
       
-      // Set up subscription for new messages
       const channel = supabase
         .channel('messages_channel')
         .on(
@@ -98,6 +97,21 @@ const Navbar = () => {
       return `${profile.first_name} ${profile.last_name}`.trim();
     }
     return 'User';
+  };
+
+  const getDashboardLink = () => {
+    if (!profile) return '/dashboard';
+    
+    switch (profile.role) {
+      case 'student':
+        return '/student/dashboard';
+      case 'teacher':
+        return '/teacher/dashboard';
+      case 'admin':
+        return '/admin/dashboard';
+      default:
+        return '/dashboard';
+    }
   };
 
   const navItems = [
@@ -191,7 +205,7 @@ const Navbar = () => {
                       </div>
                     </div>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                    <DropdownMenuItem onClick={() => navigate(getDashboardLink())}>
                       <UserCircle className="ml-2 h-4 w-4" />
                       <span>لوحة التحكم</span>
                     </DropdownMenuItem>
@@ -278,7 +292,7 @@ const Navbar = () => {
                     transition={{ duration: 0.2, delay: 0.25 }}
                   >
                     <Link 
-                      to="/dashboard" 
+                      to={getDashboardLink()} 
                       className="block py-2 text-base font-medium text-primary"
                       onClick={() => setMobileMenuOpen(false)}
                     >

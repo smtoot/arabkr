@@ -16,18 +16,19 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Get the redirect path from location state or default to dashboard
-  const from = location.state?.from?.pathname || '/dashboard';
-
   // Redirect if already logged in
   useEffect(() => {
     if (user && profile) {
+      // Redirect based on role
       if (profile.role === 'teacher') {
-        navigate('/teacher/dashboard');
+        navigate('/teacher/dashboard', { replace: true });
       } else if (profile.role === 'student') {
-        navigate('/student/dashboard');
+        navigate('/student/dashboard', { replace: true });
+      } else if (profile.role === 'admin') {
+        navigate('/admin/dashboard', { replace: true });
       } else {
-        navigate('/dashboard');
+        // Fallback for unknown roles
+        navigate('/dashboard', { replace: true });
       }
     }
   }, [user, profile, navigate]);
