@@ -1,7 +1,7 @@
 
 import { LearningGoal } from '@/services/api/student/learningGoalsService';
 import { LearningGoalCard } from '../LearningGoalCard';
-import { EmptyStateCard } from '../teacher-dashboard/EmptyStateCard';
+import { EmptyStateCard } from '@/components/teacher-dashboard/EmptyStateCard';
 import { Target } from 'lucide-react';
 
 interface LearningGoalsListProps {
