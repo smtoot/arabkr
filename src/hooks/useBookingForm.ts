@@ -7,6 +7,7 @@ import {
   fetchTeacherAvailability, 
   createBooking 
 } from '@/services/api/bookingService';
+import { supabase } from "@/integrations/supabase/client";
 import { useParams, useNavigate } from 'react-router-dom';
 import { addMinutes, format, parseISO, startOfWeek, endOfWeek, addDays, set } from 'date-fns';
 import { ar } from 'date-fns/locale';

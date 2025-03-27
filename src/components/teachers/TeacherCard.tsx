@@ -6,8 +6,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Teacher } from '@/types/teacher';
 
-interface TeacherCardProps {
+export interface TeacherCardProps {
   id: string;
   name: string;
   avatar: string;
@@ -18,18 +19,36 @@ interface TeacherCardProps {
   experience: number;
 }
 
-const TeacherCard: React.FC<TeacherCardProps> = ({
-  id,
-  name,
-  avatar,
-  rating,
-  hourlyRate,
-  reviewCount,
-  specialties,
-  experience
-}) => {
-  const getInitials = (name: string) => {
-    return name
+const TeacherCard: React.FC<TeacherCardProps | { teacher: Teacher }> = (props) => {
+  // Handle both direct props and teacher object
+  const isTeacherObject = 'teacher' in props;
+  
+  const id = isTeacherObject ? props.teacher.id : props.id;
+  const name = isTeacherObject 
+    ? `${props.teacher.profile.first_name} ${props.teacher.profile.last_name}`
+    : props.name;
+  const avatar = isTeacherObject 
+    ? props.teacher.profile.avatar_url || ''
+    : props.avatar;
+  const rating = isTeacherObject 
+    ? props.teacher.avg_rating
+    : props.rating;
+  const hourlyRate = isTeacherObject 
+    ? props.teacher.hourly_rate
+    : props.hourlyRate;
+  const reviewCount = isTeacherObject 
+    ? props.teacher.total_reviews
+    : props.reviewCount;
+  const specialties = isTeacherObject 
+    ? props.teacher.specialties
+    : props.specialties;
+  const experience = isTeacherObject 
+    ? props.teacher.years_experience || 0
+    : props.experience;
+
+  const getInitials = (nameString: string) => {
+    if (!nameString) return '';
+    return nameString
       .split(' ')
       .map(part => part[0])
       .join('')

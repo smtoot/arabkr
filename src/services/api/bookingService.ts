@@ -1,8 +1,10 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { LessonType } from "@/hooks/useBookingForm";
 
 // Fetch available lesson types
-export const fetchLessonTypes = async () => {
+export const fetchLessonTypes = async (): Promise<LessonType[]> => {
+  // Use raw query since lesson_types isn't in the types yet
   const { data, error } = await supabase
     .from('lesson_types')
     .select('*')
@@ -13,7 +15,7 @@ export const fetchLessonTypes = async () => {
     throw error;
   }
   
-  return data;
+  return data as LessonType[];
 };
 
 // Fetch a teacher's availability
@@ -61,11 +63,13 @@ export const createBooking = async (bookingData: {
   amount: number;
   notes?: string;
 }) => {
+  const user = await supabase.auth.getUser();
+  
   const { data, error } = await supabase
     .from('bookings')
     .insert([{
       ...bookingData,
-      student_id: (await supabase.auth.getUser()).data.user?.id,
+      student_id: user.data.user?.id,
       status: 'pending'
     }])
     .select()
@@ -100,9 +104,9 @@ export const processBookingPayment = async (bookingId: string, amount: number) =
   // In a real system, this would interact with a payment gateway
   // For now, we'll simulate the payment by deducting from wallet
   
-  const user = (await supabase.auth.getUser()).data.user;
+  const user = await supabase.auth.getUser();
   
-  if (!user) {
+  if (!user.data.user) {
     throw new Error('User not authenticated');
   }
   
@@ -111,16 +115,27 @@ export const processBookingPayment = async (bookingId: string, amount: number) =
   // In production, you'd use an edge function to handle this atomically
   
   // 1. Update wallet balance
-  const { error: walletError } = await supabase
+  const { data: walletData, error: walletError } = await supabase
     .from('wallets')
-    .update({ 
-      balance: supabase.rpc('decrement_balance', { amount_to_deduct: amount })
-    })
-    .eq('user_id', user.id);
+    .select('id, balance')
+    .eq('user_id', user.data.user.id)
+    .single();
   
   if (walletError) {
-    console.error('Error updating wallet:', walletError);
+    console.error('Error getting wallet:', walletError);
     throw walletError;
+  }
+  
+  const newBalance = Number(walletData.balance) - amount;
+  
+  const { error: updateWalletError } = await supabase
+    .from('wallets')
+    .update({ balance: newBalance })
+    .eq('id', walletData.id);
+  
+  if (updateWalletError) {
+    console.error('Error updating wallet:', updateWalletError);
+    throw updateWalletError;
   }
   
   // 2. Update booking status
@@ -140,7 +155,7 @@ export const processBookingPayment = async (bookingId: string, amount: number) =
   const { error: transactionError } = await supabase
     .from('transactions')
     .insert([{
-      wallet_id: (await supabase.from('wallets').select('id').eq('user_id', user.id).single()).data?.id,
+      wallet_id: walletData.id,
       amount: -amount, // Negative for outgoing payment
       type: 'booking_payment',
       reference_id: bookingId,
