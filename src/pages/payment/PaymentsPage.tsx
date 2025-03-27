@@ -11,7 +11,7 @@ import { PaymentHistory } from '@/components/payments/PaymentHistory';
 import { PaymentMethods } from '@/components/payments/PaymentMethods';
 import { SubscriptionInfo } from '@/components/payments/SubscriptionInfo';
 import { PaymentRecord, PaymentMethod, Subscription } from '@/types/payment';
-import { getPaymentHistory, getPaymentMethods, getUserSubscription } from '@/services/api/payment/paymentService';
+import { getPaymentHistory, getPaymentMethods, getUserSubscription } from '@/services/api/payment';
 import { useNavigate } from 'react-router-dom';
 import { Wallet } from '@/components/payments/Wallet';
 import { supabase } from '@/integrations/supabase/client';

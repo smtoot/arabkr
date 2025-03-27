@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { SUBSCRIPTION_PLANS, PaymentMethod } from '@/types/payment';
-import { createPayment, getPaymentMethods } from '@/services/api/payment/paymentService';
+import { createPayment, getPaymentMethods } from '@/services/api/payment';
 import { Loader2, CreditCard, Check } from 'lucide-react';
 import { 
   Select,
