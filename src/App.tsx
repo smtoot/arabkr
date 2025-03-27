@@ -19,6 +19,8 @@ import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
 import TeachersPage from "./pages/TeachersPage";
 import TeacherDetailPage from "./pages/TeacherDetailPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import BookingPage from "./pages/BookingPage";
+import BookingPaymentPage from "./pages/BookingPaymentPage";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +47,10 @@ const App = () => (
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              
+              {/* Booking Routes */}
+              <Route path="/booking/:id" element={<BookingPage />} />
+              <Route path="/booking/payment/:id" element={<BookingPaymentPage />} />
             </Route>
             
             {/* Student Routes */}
