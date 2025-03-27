@@ -4,7 +4,7 @@ import {
   fetchTeacherAvailability, 
   addAvailabilitySlot,
   deleteAvailabilitySlot 
-} from '@/services/api/teacherProfileService';
+} from '@/services/api/teacher/availabilityService';
 
 export interface AvailabilitySlot {
   id: string;
