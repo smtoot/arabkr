@@ -12,7 +12,7 @@ const Hero = () => {
             className="lg:w-1/2"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration:, delay: 0.4 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
           >
             <img 
               src="https://images.unsplash.com/photo-1617450365226-9bf28c04e130?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
