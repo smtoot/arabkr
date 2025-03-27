@@ -5,12 +5,17 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ResetPassword from "./pages/auth/ResetPassword";
 import UpdatePassword from "./pages/auth/UpdatePassword";
+import Verification from "./pages/auth/Verification";
+import Dashboard from "./pages/dashboard/Dashboard";
+import StudentDashboard from "./pages/dashboard/StudentDashboard";
+import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
 
 const queryClient = new QueryClient();
 
@@ -22,12 +27,30 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
             <Route path="/auth/reset-password" element={<ResetPassword />} />
             <Route path="/auth/update-password" element={<UpdatePassword />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="/auth/verification" element={<Verification />} />
+            
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
+            
+            {/* Student Routes */}
+            <Route element={<ProtectedRoute requiredRole="student" />}>
+              <Route path="/student/dashboard" element={<StudentDashboard />} />
+            </Route>
+            
+            {/* Teacher Routes */}
+            <Route element={<ProtectedRoute requiredRole="teacher" />}>
+              <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+            </Route>
+            
+            {/* Catch All */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserPlus } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -19,11 +20,26 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState(false);
   const { signUp } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (password !== confirmPassword) {
-      alert('كلمات المرور غير متطابقة');
+      toast({
+        title: "كلمات المرور غير متطابقة",
+        description: "يرجى التأكد من تطابق كلمة المرور وتأكيدها",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: "كلمة المرور قصيرة جدًا",
+        description: "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+        variant: "destructive",
+      });
       return;
     }
 
