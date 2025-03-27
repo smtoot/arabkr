@@ -104,6 +104,45 @@ export type Database = {
           },
         ]
       }
+      learning_goals: {
+        Row: {
+          completed: boolean
+          created_at: string
+          current_value: number
+          description: string | null
+          id: string
+          target_value: number
+          title: string
+          unit: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          current_value?: number
+          description?: string | null
+          id?: string
+          target_value: number
+          title: string
+          unit: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          current_value?: number
+          description?: string | null
+          id?: string
+          target_value?: number
+          title?: string
+          unit?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lesson_types: {
         Row: {
           created_at: string

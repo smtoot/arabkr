@@ -42,7 +42,7 @@ export async function fetchLearningGoals(userId: string): Promise<LearningGoal[]
     return [];
   }
 
-  return data || [];
+  return data as LearningGoal[] || [];
 }
 
 export async function createLearningGoal(
@@ -68,7 +68,7 @@ export async function createLearningGoal(
     return null;
   }
 
-  return data;
+  return data as LearningGoal;
 }
 
 export async function updateLearningGoal(
@@ -92,7 +92,7 @@ export async function updateLearningGoal(
     return null;
   }
 
-  return data;
+  return data as LearningGoal;
 }
 
 export async function deleteLearningGoal(goalId: string, userId: string): Promise<boolean> {
@@ -128,8 +128,11 @@ export async function incrementGoalProgress(
     return null;
   }
 
-  const newValue = goal.current_value + incrementBy;
-  const completed = newValue >= goal.target_value;
+  // Type assertion to access the properties safely
+  const typedGoal = goal as LearningGoal;
+  
+  const newValue = typedGoal.current_value + incrementBy;
+  const completed = newValue >= typedGoal.target_value;
 
   // Update the goal with the new value
   const { data, error } = await supabase
@@ -149,5 +152,5 @@ export async function incrementGoalProgress(
     return null;
   }
 
-  return data;
+  return data as LearningGoal;
 }
