@@ -14,6 +14,7 @@ import { PaymentRecord, PaymentMethod, Subscription } from '@/types/payment';
 import { getPaymentHistory, getPaymentMethods, getUserSubscription } from '@/services/api/payment/paymentService';
 import { useNavigate } from 'react-router-dom';
 import { Wallet } from '@/components/payments/Wallet';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function PaymentsPage() {
   const { user } = useAuth();
@@ -33,15 +34,15 @@ export default function PaymentsPage() {
       try {
         // Fetch payment history
         const history = await getPaymentHistory(user.id);
-        setPaymentHistory(history);
+        setPaymentHistory(history as PaymentRecord[]);
         
         // Fetch payment methods
         const methods = await getPaymentMethods(user.id);
-        setPaymentMethods(methods);
+        setPaymentMethods(methods as PaymentMethod[]);
         
         // Fetch subscription
         const sub = await getUserSubscription(user.id);
-        setSubscription(sub);
+        setSubscription(sub as Subscription | null);
         
         // Fetch wallet balance
         const { data: wallet } = await supabase

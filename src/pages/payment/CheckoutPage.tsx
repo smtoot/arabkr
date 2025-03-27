@@ -20,6 +20,7 @@ import {
   SelectValue, 
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function CheckoutPage() {
   const { user } = useAuth();
@@ -55,7 +56,7 @@ export default function CheckoutPage() {
       setLoading(true);
       try {
         const methods = await getPaymentMethods(user.id);
-        setPaymentMethods(methods);
+        setPaymentMethods(methods as PaymentMethod[]);
         
         // Select default payment method if available
         const defaultMethod = methods.find(m => m.is_default);
@@ -157,6 +158,7 @@ export default function CheckoutPage() {
         // Process wallet recharge
         const payment = await createPayment(user.id, {
           amount,
+          currency: 'SAR',
           payment_type: 'wallet_recharge',
           payment_method_id: paymentMethodId || undefined,
           metadata: {
@@ -180,6 +182,7 @@ export default function CheckoutPage() {
         
         const payment = await createPayment(user.id, {
           amount: plan.price,
+          currency: 'SAR',
           payment_type: 'subscription',
           payment_method_id: paymentMethodId || undefined,
           metadata: {

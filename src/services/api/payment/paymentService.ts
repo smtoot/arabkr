@@ -220,7 +220,7 @@ async function updateWalletBalance(userId: string, amount: number) {
     .from('wallets')
     .update({ 
       balance: wallet.balance + amount,
-      updated_at: new Date()
+      updated_at: new Date().toISOString()
     })
     .eq('user_id', userId);
 
@@ -260,7 +260,10 @@ async function createSubscription(
   if (existingSubscription) {
     await supabase
       .from('subscriptions')
-      .update({ status: 'cancelled', updated_at: new Date() })
+      .update({ 
+        status: 'cancelled', 
+        updated_at: new Date().toISOString() 
+      })
       .eq('id', existingSubscription.id);
   }
 
@@ -286,7 +289,7 @@ export async function cancelSubscription(userId: string, subscriptionId: string)
     .from('subscriptions')
     .update({ 
       status: 'cancelled',
-      updated_at: new Date()
+      updated_at: new Date().toISOString()
     })
     .eq('id', subscriptionId)
     .eq('user_id', userId);
