@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Teacher, TeacherFilters, SortOption, Review } from "@/types/teacher";
+import { Teacher, TeacherFilters, SortOption, Review, TeacherSpecialty } from "@/types/teacher";
 
 export async function fetchTeachers(
   page = 1,
@@ -85,8 +85,18 @@ export async function fetchTeachers(
 
   // Map the data to our Teacher type
   const teachers: Teacher[] = data.map((item: any) => ({
-    ...item,
+    id: item.id,
     profile: item.profiles,
+    hourly_rate: item.hourly_rate,
+    education: item.education,
+    teaching_style: item.teaching_style,
+    years_experience: item.years_experience,
+    introduction_video_url: item.introduction_video_url,
+    is_approved: item.is_approved,
+    specialties: item.specialties,
+    languages_spoken: item.languages_spoken,
+    avg_rating: item.avg_rating,
+    total_reviews: item.total_reviews
   }));
 
   return { teachers, count };
