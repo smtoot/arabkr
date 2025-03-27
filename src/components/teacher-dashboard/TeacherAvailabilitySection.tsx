@@ -6,11 +6,11 @@ import { AvailabilityCalendar } from './availability/AvailabilityCalendar';
 import { WeeklyAvailabilityTable } from './availability/WeeklyAvailabilityTable';
 import { ScheduledLessons } from './availability/ScheduledLessons';
 
-interface TeacherAvailabilityProps {
+interface TeacherAvailabilitySectionProps {
   teacherId?: string;
 }
 
-export default function TeacherAvailability({ teacherId }: TeacherAvailabilityProps) {
+export const TeacherAvailabilitySection = ({ teacherId }: TeacherAvailabilitySectionProps) => {
   const [date, setDate] = useState<Date>(new Date());
   const { availability, isLoading, addSlot, deleteSlot } = useTeacherAvailability(teacherId);
 
@@ -36,4 +36,4 @@ export default function TeacherAvailability({ teacherId }: TeacherAvailabilityPr
       <ScheduledLessons />
     </div>
   );
-}
+};

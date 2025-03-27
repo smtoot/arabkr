@@ -5,12 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TeacherStatsCard } from './TeacherStatsCard';
 
-interface TeacherEarningsProps {
+interface TeacherEarningsSectionProps {
   teacherId?: string;
 }
 
-export default function TeacherEarnings({ teacherId }: TeacherEarningsProps) {
+export const TeacherEarningsSection = ({ teacherId }: TeacherEarningsSectionProps) => {
   // This would be connected to real data in a full implementation
   const [period, setPeriod] = useState('month');
   
@@ -19,27 +20,19 @@ export default function TeacherEarnings({ teacherId }: TeacherEarningsProps) {
       <h2 className="text-2xl font-bold">الأرباح</h2>
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xl">الأرباح الإجمالية</CardTitle>
-            <DollarSign className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">0 ريال</div>
-            <p className="text-muted-foreground">منذ بداية الاشتراك</p>
-          </CardContent>
-        </Card>
+        <TeacherStatsCard
+          title="الأرباح الإجمالية"
+          value="0 ريال"
+          description="منذ بداية الاشتراك"
+          icon={DollarSign}
+        />
         
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xl">أرباح الشهر الحالي</CardTitle>
-            <TrendingUp className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">0 ريال</div>
-            <p className="text-muted-foreground">هذا الشهر</p>
-          </CardContent>
-        </Card>
+        <TeacherStatsCard
+          title="أرباح الشهر الحالي"
+          value="0 ريال"
+          description="هذا الشهر"
+          icon={TrendingUp}
+        />
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -116,4 +109,4 @@ export default function TeacherEarnings({ teacherId }: TeacherEarningsProps) {
       </Card>
     </div>
   );
-}
+};

@@ -5,11 +5,11 @@ import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Layout from '@/components/Layout';
 import TeacherDashboardHeader from '@/components/teacher-dashboard/TeacherDashboardHeader';
-import TeacherOverview from '@/components/teacher-dashboard/TeacherOverview';
-import TeacherStudents from '@/components/teacher-dashboard/TeacherStudents';
-import TeacherEarnings from '@/components/teacher-dashboard/TeacherEarnings';
-import TeacherAvailability from '@/components/teacher-dashboard/TeacherAvailability';
-import TeacherProfile from '@/components/teacher-dashboard/TeacherProfile';
+import { TeacherOverviewSection } from '@/components/teacher-dashboard/TeacherOverviewSection';
+import { TeacherStudentsSection } from '@/components/teacher-dashboard/TeacherStudentsSection';
+import { TeacherEarningsSection } from '@/components/teacher-dashboard/TeacherEarningsSection';
+import { TeacherAvailabilitySection } from '@/components/teacher-dashboard/TeacherAvailabilitySection';
+import { TeacherProfileSection } from '@/components/teacher-dashboard/TeacherProfileSection';
 import { fetchTeacherProfile } from '@/services/api/teacherProfileService';
 import { Teacher } from '@/types/teacher';
 
@@ -57,23 +57,23 @@ export default function TeacherDashboard() {
           </TabsList>
           
           <TabsContent value="overview">
-            <TeacherOverview teacherId={user?.id} />
+            <TeacherOverviewSection teacherId={user?.id} />
           </TabsContent>
           
           <TabsContent value="students">
-            <TeacherStudents teacherId={user?.id} />
+            <TeacherStudentsSection teacherId={user?.id} />
           </TabsContent>
           
           <TabsContent value="earnings">
-            <TeacherEarnings teacherId={user?.id} />
+            <TeacherEarningsSection teacherId={user?.id} />
           </TabsContent>
           
           <TabsContent value="availability">
-            <TeacherAvailability teacherId={user?.id} />
+            <TeacherAvailabilitySection teacherId={user?.id} />
           </TabsContent>
           
           <TabsContent value="profile">
-            <TeacherProfile teacherProfile={teacherProfile} isLoading={isLoading} />
+            <TeacherProfileSection teacherProfile={teacherProfile} isLoading={isLoading} />
           </TabsContent>
         </Tabs>
       </div>

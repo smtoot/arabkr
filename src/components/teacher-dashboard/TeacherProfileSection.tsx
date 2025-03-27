@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
 import { 
   Dialog, 
   DialogContent, 
@@ -19,12 +18,12 @@ import { Teacher } from '@/types/teacher';
 import { updateTeacherProfile } from '@/services/api/teacherProfileService';
 import { useToast } from '@/hooks/use-toast';
 
-interface TeacherProfileProps {
+interface TeacherProfileSectionProps {
   teacherProfile: Teacher | null;
   isLoading: boolean;
 }
 
-export default function TeacherProfile({ teacherProfile, isLoading }: TeacherProfileProps) {
+export const TeacherProfileSection = ({ teacherProfile, isLoading }: TeacherProfileSectionProps) => {
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [videoDialogOpen, setVideoDialogOpen] = useState(false);
@@ -96,12 +95,14 @@ export default function TeacherProfile({ teacherProfile, isLoading }: TeacherPro
         )}
       </div>
       
+      {/* Personal Information Card */}
       <Card>
         <CardHeader>
           <CardTitle>المعلومات الشخصية</CardTitle>
           <CardDescription>معلوماتك الأساسية التي ستظهر للطلاب</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Avatar and Name Section */}
           <div className="flex flex-col md:flex-row gap-6 items-start">
             <div className="flex flex-col items-center gap-2">
               <Avatar className="h-24 w-24">
@@ -118,6 +119,7 @@ export default function TeacherProfile({ teacherProfile, isLoading }: TeacherPro
               )}
             </div>
             
+            {/* Name and Basic Info Fields */}
             <div className="space-y-4 flex-1">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -176,6 +178,7 @@ export default function TeacherProfile({ teacherProfile, isLoading }: TeacherPro
             </div>
           </div>
           
+          {/* Bio Field */}
           <div>
             <label className="text-sm font-medium mb-1 block">نبذة عني</label>
             {isEditing ? (
@@ -193,6 +196,7 @@ export default function TeacherProfile({ teacherProfile, isLoading }: TeacherPro
         </CardContent>
       </Card>
       
+      {/* Qualifications Card */}
       <Card>
         <CardHeader>
           <CardTitle>المؤهلات والخبرات</CardTitle>
@@ -231,6 +235,7 @@ export default function TeacherProfile({ teacherProfile, isLoading }: TeacherPro
         </CardContent>
       </Card>
       
+      {/* Intro Video Card */}
       <Card>
         <CardHeader>
           <CardTitle>فيديو التعريف</CardTitle>
@@ -263,6 +268,7 @@ export default function TeacherProfile({ teacherProfile, isLoading }: TeacherPro
         </CardContent>
       </Card>
       
+      {/* Pricing Card */}
       <Card>
         <CardHeader>
           <CardTitle>التسعير</CardTitle>
@@ -289,6 +295,7 @@ export default function TeacherProfile({ teacherProfile, isLoading }: TeacherPro
         </CardContent>
       </Card>
       
+      {/* Video Dialog */}
       <Dialog open={videoDialogOpen} onOpenChange={setVideoDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -326,4 +333,4 @@ export default function TeacherProfile({ teacherProfile, isLoading }: TeacherPro
       </Dialog>
     </div>
   );
-}
+};

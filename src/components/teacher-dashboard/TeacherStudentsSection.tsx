@@ -1,16 +1,16 @@
 
 import { useState } from 'react';
 import { Users } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { EmptyStateCard } from './EmptyStateCard';
 
-interface TeacherStudentsProps {
+interface TeacherStudentsSectionProps {
   teacherId?: string;
 }
 
-export default function TeacherStudents({ teacherId }: TeacherStudentsProps) {
+export const TeacherStudentsSection = ({ teacherId }: TeacherStudentsSectionProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   
   // Mock data - will be replaced with real data later
@@ -32,15 +32,11 @@ export default function TeacherStudents({ teacherId }: TeacherStudentsProps) {
       </div>
       
       {students.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center p-6">
-            <Users className="h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-lg font-medium text-center">لا يوجد طلاب حاليًا</p>
-            <p className="text-muted-foreground text-center mb-4">
-              سيظهر الطلاب هنا بمجرد أن يشتركوا في الدروس معك
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyStateCard
+          icon={Users}
+          title="لا يوجد طلاب حاليًا"
+          description="سيظهر الطلاب هنا بمجرد أن يشتركوا في الدروس معك"
+        />
       ) : (
         <div className="rounded-md border">
           <Table>
@@ -67,4 +63,4 @@ export default function TeacherStudents({ teacherId }: TeacherStudentsProps) {
       )}
     </div>
   );
-}
+};
