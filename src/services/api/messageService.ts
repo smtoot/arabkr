@@ -43,7 +43,8 @@ export async function fetchConversations(): Promise<Conversation[]> {
       throw error;
     }
     
-    return (data || []) as Conversation[];
+    // Type assertion with unknown as intermediate step to fix TypeScript error
+    return (data || []) as unknown as Conversation[];
   } catch (error) {
     console.error('Error in fetchConversations:', error);
     throw error;
@@ -59,11 +60,12 @@ export async function fetchMessages(otherUserId: string): Promise<Message[]> {
       throw new Error('User not authenticated');
     }
     
+    // Fix the filter syntax - use proper combination of filter methods
     const { data, error } = await supabase
       .from('messages')
       .select('*')
       .or(`sender_id.eq.${currentUser.user.id},recipient_id.eq.${currentUser.user.id}`)
-      .and(`(sender_id.eq.${otherUserId}),or(recipient_id.eq.${otherUserId})`)
+      .or(`sender_id.eq.${otherUserId},recipient_id.eq.${otherUserId}`)
       .order('created_at', { ascending: true });
 
     if (error) {
@@ -71,7 +73,13 @@ export async function fetchMessages(otherUserId: string): Promise<Message[]> {
       throw error;
     }
     
-    return data || [];
+    // Further filter the results in JavaScript to ensure we only get messages between these two users
+    const filteredMessages = data?.filter(message => 
+      (message.sender_id === currentUser.user?.id && message.recipient_id === otherUserId) || 
+      (message.sender_id === otherUserId && message.recipient_id === currentUser.user?.id)
+    ) || [];
+    
+    return filteredMessages;
   } catch (error) {
     console.error('Error in fetchMessages:', error);
     throw error;
@@ -113,7 +121,7 @@ export async function sendMessage(
 // Mark messages from a specific sender as read
 export async function markMessagesAsRead(senderId: string): Promise<void> {
   try {
-    // We need to use the SQL function we created
+    // We need to use the SQL function we created via execute_sql
     const { error } = await supabase
       .rpc('execute_sql', {
         query_text: `SELECT mark_messages_as_read('${senderId}')`
