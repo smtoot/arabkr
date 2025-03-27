@@ -31,7 +31,14 @@ export const useTeacherAvailability = (teacherId?: string) => {
     try {
       setIsLoading(true);
       const data = await fetchTeacherAvailability(teacherId);
-      setAvailability(data || []);
+      
+      // Handle the different possible return types
+      if (Array.isArray(data)) {
+        setAvailability(data as AvailabilitySlot[]);
+      } else if (data && 'availability' in data) {
+        // If data contains availability and existingBookings properties
+        setAvailability(data.availability as AvailabilitySlot[]);
+      }
     } catch (error) {
       console.error('Error loading availability:', error);
     } finally {

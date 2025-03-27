@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Teacher, TeacherFilters, SortOption, TeacherSpecialty } from '@/types/teacher';
-import { fetchTeachers } from '@/services/api/teacherApi';
+import { fetchTeachers } from '@/services/api/teacherService';
 import { useToast } from '@/hooks/use-toast';
 
 export function useTeachersList(pageSize: number = 9) {

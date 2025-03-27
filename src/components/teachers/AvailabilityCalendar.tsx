@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { fetchTeacherAvailability } from '@/services/api/teacherApi';
+import { fetchTeacherAvailability } from '@/services/api/teacherService';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface TimeSlot {
