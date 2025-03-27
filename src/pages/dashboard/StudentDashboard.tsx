@@ -19,6 +19,8 @@ export default function StudentDashboard() {
   const { user } = useAuth();
   const [walletData, setWalletData] = useState<{ balance: number; currency: string } | undefined>();
   const [isLoading, setIsLoading] = useState(true);
+  const [lessonsLoading, setLessonsLoading] = useState(true);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
 
   useEffect(() => {
     const fetchWalletData = async () => {
@@ -63,7 +65,7 @@ export default function StudentDashboard() {
               </TabsList>
               
               <TabsContent value="upcoming" className="mt-6">
-                <UpcomingLessonsSection />
+                <UpcomingLessonsSection isLoading={lessonsLoading} />
               </TabsContent>
               
               <TabsContent value="progress" className="mt-6">
@@ -75,7 +77,7 @@ export default function StudentDashboard() {
               </TabsContent>
               
               <TabsContent value="reviews" className="mt-6">
-                <ReviewsSection />
+                <ReviewsSection isLoading={reviewsLoading} />
               </TabsContent>
             </Tabs>
           </div>

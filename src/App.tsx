@@ -30,67 +30,70 @@ import AddPaymentMethodPage from "./pages/payment/AddPaymentMethodPage";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Index />} />
-            <Route path="/auth/login" element={<Login />} />
-            <Route path="/auth/register" element={<Register />} />
-            <Route path="/auth/reset-password" element={<ResetPassword />} />
-            <Route path="/auth/update-password" element={<UpdatePassword />} />
-            <Route path="/auth/verification" element={<Verification />} />
-            
-            {/* Teachers Browse Routes */}
-            <Route path="/teachers" element={<TeachersPage />} />
-            <Route path="/teachers/:id" element={<TeacherDetailPage />} />
-            
-            {/* Protected Routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<Dashboard />} />
+// Create the App component as a function component
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Index />} />
+              <Route path="/auth/login" element={<Login />} />
+              <Route path="/auth/register" element={<Register />} />
+              <Route path="/auth/reset-password" element={<ResetPassword />} />
+              <Route path="/auth/update-password" element={<UpdatePassword />} />
+              <Route path="/auth/verification" element={<Verification />} />
               
-              {/* Booking Routes */}
-              <Route path="/booking/:id" element={<BookingPage />} />
-              <Route path="/booking/payment/:id" element={<BookingPaymentPage />} />
+              {/* Teachers Browse Routes */}
+              <Route path="/teachers" element={<TeachersPage />} />
+              <Route path="/teachers/:id" element={<TeacherDetailPage />} />
               
-              {/* Messages Routes */}
-              <Route path="/messages" element={<MessagesPage />} />
-              <Route path="/messages/:userId" element={<MessageDetailPage />} />
+              {/* Protected Routes */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                
+                {/* Booking Routes */}
+                <Route path="/booking/:id" element={<BookingPage />} />
+                <Route path="/booking/payment/:id" element={<BookingPaymentPage />} />
+                
+                {/* Messages Routes */}
+                <Route path="/messages" element={<MessagesPage />} />
+                <Route path="/messages/:userId" element={<MessageDetailPage />} />
+                
+                {/* Payment Routes */}
+                <Route path="/payment" element={<PaymentsPage />} />
+                <Route path="/payment/checkout" element={<CheckoutPage />} />
+                <Route path="/payment/add-method" element={<AddPaymentMethodPage />} />
+              </Route>
               
-              {/* Payment Routes */}
-              <Route path="/payment" element={<PaymentsPage />} />
-              <Route path="/payment/checkout" element={<CheckoutPage />} />
-              <Route path="/payment/add-method" element={<AddPaymentMethodPage />} />
-            </Route>
-            
-            {/* Student Routes */}
-            <Route element={<ProtectedRoute requiredRole="student" />}>
-              <Route path="/student/dashboard" element={<StudentDashboard />} />
-              <Route path="/student/learning-goals" element={<StudentLearningGoalsPage />} />
-            </Route>
-            
-            {/* Teacher Routes */}
-            <Route element={<ProtectedRoute requiredRole="teacher" />}>
-              <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
-            </Route>
-            
-            {/* Admin Routes */}
-            <Route element={<ProtectedRoute requiredRole="admin" />}>
-              <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-            </Route>
-            
-            {/* Catch All */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+              {/* Student Routes */}
+              <Route element={<ProtectedRoute requiredRole="student" />}>
+                <Route path="/student/dashboard" element={<StudentDashboard />} />
+                <Route path="/student/learning-goals" element={<StudentLearningGoalsPage />} />
+              </Route>
+              
+              {/* Teacher Routes */}
+              <Route element={<ProtectedRoute requiredRole="teacher" />}>
+                <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+              </Route>
+              
+              {/* Admin Routes */}
+              <Route element={<ProtectedRoute requiredRole="admin" />}>
+                <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+              </Route>
+              
+              {/* Catch All */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </TooltipProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
+  );
+}
 
 export default App;
