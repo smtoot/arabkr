@@ -7,3 +7,6 @@ export * from './studentService';
 export * from './earningsService';
 export * from './teacherListingService';
 export * from './detailService';
+export * from './specialtiesService';
+export * from './languagesService';
+export * from './profileManagementService';

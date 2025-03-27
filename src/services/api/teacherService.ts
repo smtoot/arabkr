@@ -6,12 +6,34 @@ export {
 } from './teacher/index';
 
 export { 
-  fetchTeacherAvailability 
+  fetchTeacherAvailability,
+  addAvailabilitySlot,
+  deleteAvailabilitySlot
 } from './teacher/availabilityService';
 
 export { 
-  fetchTeacherReviews 
+  fetchTeacherReviews,
+  createReview,
+  updateReview,
+  deleteReview
 } from './reviewsApi';
+
+export {
+  fetchTeacherSpecialties,
+  addTeacherSpecialty,
+  removeTeacherSpecialty
+} from './teacher/specialtiesService';
+
+export {
+  fetchTeacherLanguages,
+  addTeacherLanguage,
+  removeTeacherLanguage
+} from './teacher/languagesService';
+
+export {
+  updateTeacherProfileComplete,
+  uploadProfilePicture
+} from './teacher/profileManagementService';
 
 export { 
   generateMockTeachers, 

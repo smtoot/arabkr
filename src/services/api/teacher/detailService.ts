@@ -2,6 +2,8 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Teacher } from "@/types/teacher";
 import { generateMockTeachers } from "../mockTeacherData";
+import { fetchTeacherLanguages } from "./languagesService";
+import { fetchTeacherSpecialties } from "./specialtiesService";
 
 export async function fetchTeacherById(id: string) {
   try {
@@ -32,25 +34,11 @@ export async function fetchTeacherById(id: string) {
       throw error;
     }
 
-    // Using type assertion to handle the execute_sql RPC call
-    const { data: specialtiesData, error: specialtiesError } = await supabase
-      .rpc('execute_sql', {
-        query_text: `SELECT specialty FROM teacher_specialties WHERE teacher_id = '${id}'`
-      }) as any;
+    // Fetch specialties using the new table
+    const specialties = await fetchTeacherSpecialties(id);
     
-    const specialties = specialtiesError || !specialtiesData 
-      ? [] 
-      : specialtiesData.map((s: any) => s.specialty);
-    
-    // Using type assertion to handle the execute_sql RPC call
-    const { data: languagesData, error: languagesError } = await supabase
-      .rpc('execute_sql', {
-        query_text: `SELECT language FROM teacher_languages WHERE teacher_id = '${id}'`
-      }) as any;
-    
-    const languages = languagesError || !languagesData 
-      ? [] 
-      : languagesData.map((l: any) => l.language);
+    // Fetch languages using the new table
+    const languages = await fetchTeacherLanguages(id);
     
     // Using the get_teacher_rating function
     const { data: ratingData, error: ratingError } = await supabase

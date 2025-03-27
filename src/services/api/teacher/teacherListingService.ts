@@ -1,6 +1,8 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Teacher, TeacherFilters, SortOption } from "@/types/teacher";
+import { fetchTeacherLanguages } from "./languagesService";
+import { fetchTeacherSpecialties } from "./specialtiesService";
 
 export async function fetchTeachers(
   page = 1,
@@ -69,25 +71,11 @@ export async function fetchTeachers(
 
     const teachersWithDetails = await Promise.all(
       data.map(async (item: any) => {
-        // Using type assertion to handle the execute_sql RPC call
-        const { data: specialtiesData, error: specialtiesError } = await supabase
-          .rpc('execute_sql', {
-            query_text: `SELECT specialty FROM teacher_specialties WHERE teacher_id = '${item.id}'`
-          }) as any;
+        // Fetch specialties using the new table
+        const specialties = await fetchTeacherSpecialties(item.id);
         
-        const specialties = specialtiesError || !specialtiesData 
-          ? [] 
-          : specialtiesData.map((s: any) => s.specialty);
-        
-        // Using type assertion to handle the execute_sql RPC call
-        const { data: languagesData, error: languagesError } = await supabase
-          .rpc('execute_sql', {
-            query_text: `SELECT language FROM teacher_languages WHERE teacher_id = '${item.id}'`
-          }) as any;
-        
-        const languages = languagesError || !languagesData 
-          ? [] 
-          : languagesData.map((l: any) => l.language);
+        // Fetch languages using the new table  
+        const languages = await fetchTeacherLanguages(item.id);
         
         // Using the get_teacher_rating function
         const { data: ratingData, error: ratingError } = await supabase
@@ -125,13 +113,27 @@ export async function fetchTeachers(
       );
     }
 
+    // Filter by specialties if provided
+    if (filters?.specialties && filters.specialties.length > 0) {
+      filteredTeachers = filteredTeachers.filter(teacher => 
+        filters.specialties!.some(specialty => teacher.specialties.includes(specialty))
+      );
+    }
+
+    // Filter by languages if provided
+    if (filters?.languages && filters.languages.length > 0) {
+      filteredTeachers = filteredTeachers.filter(teacher => 
+        filters.languages!.some(language => teacher.languages_spoken.includes(language))
+      );
+    }
+
     if (sort === 'rating') {
       filteredTeachers.sort((a, b) => b.avg_rating - a.avg_rating);
     }
 
     return { 
       teachers: filteredTeachers, 
-      count: filteredTeachers.length 
+      count: count || filteredTeachers.length 
     };
   } catch (error) {
     console.error('Error in fetchTeachers:', error);
