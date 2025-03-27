@@ -11,7 +11,12 @@ import { Star, Book, Calendar, MessageSquare, Video, Clock, ArrowRight } from 'l
 import Layout from '@/components/Layout';
 import ReviewsList from '@/components/teachers/ReviewsList';
 import AvailabilityCalendar from '@/components/teachers/AvailabilityCalendar';
-import { fetchTeacherById, fetchTeacherReviews, generateMockTeachers, generateMockReviews } from '@/services/api/teacherService';
+import { 
+  fetchTeacherById, 
+  fetchTeacherReviews, 
+  generateMockTeachers, 
+  generateMockReviews 
+} from '@/services/api/teacherService';
 import { Teacher, Review, TeacherSpecialty } from '@/types/teacher';
 
 // Map specialties to Arabic

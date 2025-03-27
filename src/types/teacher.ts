@@ -15,6 +15,7 @@ export interface Teacher {
     last_name: string;
     avatar_url: string | null;
     bio: string | null;
+    native_language?: string | null;
   };
   hourly_rate: number;
   education: string | null;
