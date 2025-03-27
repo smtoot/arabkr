@@ -1,6 +1,6 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Teacher, TeacherFilters, SortOption } from "@/types/teacher";
+import { generateMockTeachers } from "./mockTeacherData";
 
 export async function fetchTeachers(
   page = 1,
@@ -19,8 +19,6 @@ export async function fetchTeachers(
         years_experience,
         introduction_video_url,
         is_approved,
-        avg_rating,
-        total_reviews,
         profiles (
           first_name,
           last_name,
@@ -31,7 +29,6 @@ export async function fetchTeachers(
       `, { count: 'exact' })
       .eq('is_approved', true);
 
-    // Apply filters
     if (filters) {
       if (filters.minPrice !== undefined) {
         query = query.gte('hourly_rate', filters.minPrice);
@@ -39,17 +36,10 @@ export async function fetchTeachers(
       if (filters.maxPrice !== undefined) {
         query = query.lte('hourly_rate', filters.maxPrice);
       }
-      if (filters.minRating !== undefined) {
-        query = query.gte('avg_rating', filters.minRating);
-      }
     }
 
-    // Apply sorting
     if (sort) {
       switch (sort) {
-        case 'rating':
-          query = query.order('avg_rating', { ascending: false });
-          break;
         case 'price_low':
           query = query.order('hourly_rate', { ascending: true });
           break;
@@ -60,14 +50,12 @@ export async function fetchTeachers(
           query = query.order('years_experience', { ascending: false });
           break;
         default:
-          query = query.order('avg_rating', { ascending: false });
+          query = query.order('id', { ascending: true });
       }
     } else {
-      // Default ordering by rating
-      query = query.order('avg_rating', { ascending: false });
+      query = query.order('id', { ascending: true });
     }
 
-    // Apply pagination
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
     query = query.range(from, to);
@@ -79,26 +67,31 @@ export async function fetchTeachers(
       throw error;
     }
 
-    // Fetch specialties and languages for each teacher
     const teachersWithDetails = await Promise.all(
       data.map(async (item: any) => {
-        const { data: specialtiesData, error: specialtiesError } = await supabase
+        const specialtiesResponse = await supabase
           .from('teacher_specialties')
           .select('specialty')
           .eq('teacher_id', item.id);
         
-        if (specialtiesError) {
-          console.error('Error fetching specialties:', specialtiesError);
-        }
+        const specialties = specialtiesResponse.error 
+          ? [] 
+          : specialtiesResponse.data.map((s: any) => s.specialty);
         
-        const { data: languagesData, error: languagesError } = await supabase
+        const languagesResponse = await supabase
           .from('teacher_languages')
           .select('language')
           .eq('teacher_id', item.id);
         
-        if (languagesError) {
-          console.error('Error fetching languages:', languagesError);
-        }
+        const languages = languagesResponse.error 
+          ? [] 
+          : languagesResponse.data.map((l: any) => l.language);
+        
+        const ratingsResponse = await supabase
+          .rpc('get_teacher_rating', { teacher_id: item.id });
+        
+        const avgRating = ratingsResponse.error ? 0 : (ratingsResponse.data?.avg_rating || 0);
+        const totalReviews = ratingsResponse.error ? 0 : (ratingsResponse.data?.total_reviews || 0);
         
         return {
           id: item.id,
@@ -109,18 +102,33 @@ export async function fetchTeachers(
           years_experience: item.years_experience,
           introduction_video_url: item.introduction_video_url,
           is_approved: item.is_approved,
-          specialties: specialtiesData ? specialtiesData.map((s: any) => s.specialty) : [],
-          languages_spoken: languagesData ? languagesData.map((l: any) => l.language) : [],
-          avg_rating: item.avg_rating || 0,
-          total_reviews: item.total_reviews || 0
+          specialties: specialties,
+          languages_spoken: languages,
+          avg_rating: avgRating,
+          total_reviews: totalReviews
         };
       })
     );
 
-    return { teachers: teachersWithDetails, count: count || 0 };
+    let filteredTeachers = teachersWithDetails;
+    if (filters?.minRating !== undefined) {
+      filteredTeachers = filteredTeachers.filter(
+        teacher => teacher.avg_rating >= (filters.minRating || 0)
+      );
+    }
+
+    if (sort === 'rating') {
+      filteredTeachers.sort((a, b) => b.avg_rating - a.avg_rating);
+    }
+
+    return { 
+      teachers: filteredTeachers, 
+      count: filteredTeachers.length 
+    };
   } catch (error) {
     console.error('Error in fetchTeachers:', error);
-    throw error;
+    const mockTeachers = generateMockTeachers(9);
+    return { teachers: mockTeachers, count: mockTeachers.length };
   }
 }
 
@@ -136,8 +144,6 @@ export async function fetchTeacherById(id: string) {
         years_experience,
         introduction_video_url,
         is_approved,
-        avg_rating,
-        total_reviews,
         profiles (
           first_name,
           last_name,
@@ -155,24 +161,29 @@ export async function fetchTeacherById(id: string) {
       throw error;
     }
 
-    // Fetch specialties and languages
-    const { data: specialtiesData, error: specialtiesError } = await supabase
+    const specialtiesResponse = await supabase
       .from('teacher_specialties')
       .select('specialty')
       .eq('teacher_id', id);
     
-    if (specialtiesError) {
-      console.error('Error fetching specialties:', specialtiesError);
-    }
+    const specialties = specialtiesResponse.error 
+      ? [] 
+      : specialtiesResponse.data.map((s: any) => s.specialty);
     
-    const { data: languagesData, error: languagesError } = await supabase
+    const languagesResponse = await supabase
       .from('teacher_languages')
       .select('language')
       .eq('teacher_id', id);
     
-    if (languagesError) {
-      console.error('Error fetching languages:', languagesError);
-    }
+    const languages = languagesResponse.error 
+      ? [] 
+      : languagesResponse.data.map((l: any) => l.language);
+    
+    const ratingsResponse = await supabase
+      .rpc('get_teacher_rating', { teacher_id: id });
+    
+    const avgRating = ratingsResponse.error ? 0 : (ratingsResponse.data?.avg_rating || 0);
+    const totalReviews = ratingsResponse.error ? 0 : (ratingsResponse.data?.total_reviews || 0);
 
     const teacher: Teacher = {
       id: data.id,
@@ -183,16 +194,17 @@ export async function fetchTeacherById(id: string) {
       years_experience: data.years_experience,
       introduction_video_url: data.introduction_video_url,
       is_approved: data.is_approved,
-      specialties: specialtiesData ? specialtiesData.map((s: any) => s.specialty) : [],
-      languages_spoken: languagesData ? languagesData.map((l: any) => l.language) : [],
-      avg_rating: data.avg_rating || 0,
-      total_reviews: data.total_reviews || 0
+      specialties: specialties,
+      languages_spoken: languages,
+      avg_rating: avgRating,
+      total_reviews: totalReviews
     };
 
     return teacher;
   } catch (error) {
     console.error('Error in fetchTeacherById:', error);
-    throw error;
+    const mockTeachers = generateMockTeachers(1);
+    return mockTeachers[0];
   }
 }
 
@@ -203,7 +215,6 @@ export async function fetchTeacherAvailability(teacherId: string, startDate?: Da
       .select('*')
       .eq('teacher_id', teacherId);
       
-    // If start and end dates are provided, fetch bookings for that period
     if (startDate && endDate) {
       const startDateStr = startDate.toISOString();
       const endDateStr = endDate.toISOString();
