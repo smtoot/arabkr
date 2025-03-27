@@ -1,74 +1,77 @@
 
 import { motion } from 'framer-motion';
-import { Feather, Award, Sparkles, Layers, Repeat, Shield } from 'lucide-react';
+import { School, Video, CalendarDays, Shield, CreditCard, BookOpen } from 'lucide-react';
 
 const features = [
   {
-    icon: <Feather className="w-6 h-6" />,
-    title: 'Lightweight Design',
-    description: 'Streamlined interface that focuses on what matters most, eliminating unnecessary elements.'
+    title: 'معلمون محترفون',
+    description: 'تعلم مع معلمين كوريين محترفين أو معلمين ثنائيي اللغة.',
+    icon: School,
   },
   {
-    icon: <Award className="w-6 h-6" />,
-    title: 'Premium Build',
-    description: 'Crafted with careful attention to every detail, ensuring lasting quality and performance.'
+    title: 'دروس مباشرة',
+    description: 'جلسات فيديو عالية الجودة مع ميزات تعليمية تفاعلية.',
+    icon: Video,
   },
   {
-    icon: <Sparkles className="w-6 h-6" />,
-    title: 'Intuitive Experience',
-    description: 'Designed to be immediately understandable, without the need for instructions.'
+    title: 'مواعيد مرنة',
+    description: 'اختر الأوقات التي تناسبك واحجز دروسك بسهولة.',
+    icon: CalendarDays,
   },
   {
-    icon: <Layers className="w-6 h-6" />,
-    title: 'Advanced Materials',
-    description: 'Utilizing the best materials available to create a product that feels as good as it looks.'
+    title: 'خصوصية وأمان',
+    description: 'محادثات ودروس آمنة ومشفرة لحماية خصوصيتك.',
+    icon: Shield,
   },
   {
-    icon: <Repeat className="w-6 h-6" />,
-    title: 'Sustainable Approach',
-    description: 'Built with recycled materials and designed for longevity to minimize environmental impact.'
+    title: 'نظام دفع سهل',
+    description: 'محفظة إلكترونية وطرق دفع متعددة بالريال السعودي.',
+    icon: CreditCard,
   },
   {
-    icon: <Shield className="w-6 h-6" />,
-    title: 'Privacy Focused',
-    description: 'Your data stays yours with our commitment to privacy and security at every level.'
-  }
+    title: 'مناهج مخصصة',
+    description: 'دروس مصممة حسب مستواك واحتياجاتك التعليمية.',
+    icon: BookOpen,
+  },
 ];
 
 const Features = () => {
   return (
-    <section id="features" className="py-24 bg-white overflow-hidden">
-      <div className="content-container">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-16"
-        >
-          <span className="inline-block px-3 py-1 mb-4 text-xs font-medium tracking-wider text-primary bg-primary/10 rounded-full uppercase">
-            Features
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-            Thoughtfully designed.<br />Meticulously crafted.
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Every feature has been designed with purpose and precision, ensuring a seamless and delightful experience.
-          </p>
-        </motion.div>
-
+    <section className="py-20 bg-background" dir="rtl" id="features">
+      <div className="container mx-auto px-4">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.h2 
+            className="text-3xl font-bold text-primary mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            مميزات منصة هانجوك
+          </motion.h2>
+          <motion.p 
+            className="text-muted-foreground text-lg"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            توفر منصتنا العديد من المميزات لمساعدتك على تعلم اللغة الكورية بكفاءة وسهولة
+          </motion.p>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <motion.div
+            <motion.div 
               key={index}
+              className="p-6 rounded-xl border border-border bg-card/50 hover:bg-card hover:shadow-md transition-all"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="flex flex-col p-6 rounded-2xl border border-border/60 hover:border-primary/20 transition-all hover:shadow-lg hover:-translate-y-1"
+              transition={{ duration: 0.4, delay: index * 0.1 }}
             >
-              <div className="p-3 mb-4 rounded-xl bg-primary/5 w-fit">
-                {feature.icon}
+              <div className="h-12 w-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4">
+                <feature.icon size={24} />
               </div>
               <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
               <p className="text-muted-foreground">{feature.description}</p>

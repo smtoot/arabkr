@@ -8,10 +8,12 @@ import Contact from '@/components/Contact';
 const Index = () => {
   return (
     <Layout>
-      <Hero />
-      <Features />
-      <About />
-      <Contact />
+      <div dir="rtl">
+        <Hero />
+        <Features />
+        <About />
+        <Contact />
+      </div>
     </Layout>
   );
 };

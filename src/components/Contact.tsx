@@ -1,117 +1,128 @@
 
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Mail, Phone, MapPin } from 'lucide-react';
 
 const Contact = () => {
-  const [formState, setFormState] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormState({
-      ...formState,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form submitted:', formState);
-    // In a real application, you would send this data to your backend
-    alert('Thanks for your message! We\'ll get back to you soon.');
-    setFormState({ name: '', email: '', message: '' });
-  };
-
   return (
-    <section id="contact" className="py-24 bg-white">
-      <div className="content-container">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-16"
-        >
-          <span className="inline-block px-3 py-1 mb-4 text-xs font-medium tracking-wider text-primary bg-primary/10 rounded-full uppercase">
-            Contact Us
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-            Get in touch
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            We'd love to hear from you. Send us a message and we'll respond as soon as possible.
-          </p>
-        </motion.div>
-
-        <div className="max-w-2xl mx-auto">
-          <motion.form
-            onSubmit={handleSubmit}
-            className="space-y-6"
+    <section className="py-20 bg-background" dir="rtl" id="contact">
+      <div className="container mx-auto px-4">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.h2 
+            className="text-3xl font-bold text-primary mb-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.1 }}
+            transition={{ duration: 0.5 }}
           >
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-primary mb-2">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formState.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                  placeholder="Your name"
-                />
+            تواصل معنا
+          </motion.h2>
+          <motion.p 
+            className="text-muted-foreground text-lg"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            نحن هنا للإجابة على جميع استفساراتك. لا تتردد في التواصل معنا
+          </motion.p>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                  <Mail size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">البريد الإلكتروني</h3>
+                  <p className="text-muted-foreground">info@hanguk.com</p>
+                  <p className="text-muted-foreground">support@hanguk.com</p>
+                </div>
               </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-primary mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formState.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                  placeholder="your.email@example.com"
-                />
+              
+              <div className="flex items-start gap-4">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                  <Phone size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">رقم الهاتف</h3>
+                  <p className="text-muted-foreground">+966 123 456 789</p>
+                  <p className="text-muted-foreground">+966 987 654 321</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                  <MapPin size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">العنوان</h3>
+                  <p className="text-muted-foreground">
+                    الرياض، المملكة العربية السعودية
+                  </p>
+                </div>
               </div>
             </div>
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-primary mb-2">
-                Message
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                value={formState.message}
-                onChange={handleChange}
-                required
-                rows={5}
-                className="w-full px-4 py-3 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all resize-none"
-                placeholder="Your message..."
-              />
+            
+            <div className="mt-12">
+              <h3 className="text-xl font-semibold mb-4">ساعات العمل</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">الأحد - الخميس</span>
+                  <span>9:00 ص - 8:00 م</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">الجمعة</span>
+                  <span>2:00 م - 8:00 م</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">السبت</span>
+                  <span>10:00 ص - 6:00 م</span>
+                </div>
+              </div>
             </div>
-            <motion.button
-              type="submit"
-              className="w-full sm:w-auto flex items-center justify-center space-x-2 px-8 py-3 bg-primary text-primary-foreground rounded-lg hover:shadow-lg transition-all"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <span>Send Message</span>
-              <Send size={16} />
-            </motion.button>
-          </motion.form>
+          </motion.div>
+          
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <form className="space-y-6 bg-card p-8 rounded-xl border border-border">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-sm font-medium">الاسم</label>
+                  <Input id="name" placeholder="أدخل اسمك" />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-sm font-medium">البريد الإلكتروني</label>
+                  <Input id="email" type="email" placeholder="example@example.com" dir="ltr" />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="subject" className="text-sm font-medium">الموضوع</label>
+                <Input id="subject" placeholder="أدخل موضوع الرسالة" />
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="message" className="text-sm font-medium">الرسالة</label>
+                <Textarea id="message" placeholder="أدخل رسالتك هنا" rows={5} />
+              </div>
+              
+              <Button type="submit" className="w-full">إرسال الرسالة</Button>
+            </form>
+          </motion.div>
         </div>
       </div>
     </section>
