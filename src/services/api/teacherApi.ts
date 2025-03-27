@@ -70,32 +70,37 @@ export async function fetchTeachers(
 
     const teachersWithDetails = await Promise.all(
       data.map(async (item: any) => {
-        // Fetch specialties using raw SQL to avoid type errors
+        // Fetch specialties using raw SQL query as a workaround for type issues
         const { data: specialtiesData, error: specialtiesError } = await supabase
           .rpc('execute_sql', {
             query_text: `SELECT specialty FROM teacher_specialties WHERE teacher_id = '${item.id}'`
-          });
+          }) as any;
         
         const specialties = specialtiesError || !specialtiesData 
           ? [] 
           : specialtiesData.map((s: any) => s.specialty);
         
-        // Fetch languages using raw SQL to avoid type errors
+        // Fetch languages using raw SQL query as a workaround for type issues
         const { data: languagesData, error: languagesError } = await supabase
           .rpc('execute_sql', {
             query_text: `SELECT language FROM teacher_languages WHERE teacher_id = '${item.id}'`
-          });
+          }) as any;
         
         const languages = languagesError || !languagesData 
           ? [] 
           : languagesData.map((l: any) => l.language);
         
-        // Fetch teacher rating
+        // Fetch teacher rating using the get_teacher_rating function
         const { data: ratingData, error: ratingError } = await supabase
-          .rpc('get_teacher_rating', { teacher_id: item.id });
+          .rpc('get_teacher_rating', { teacher_id: item.id }) as any;
         
-        const avgRating = ratingError || !ratingData ? 0 : ratingData.avg_rating || 0;
-        const totalReviews = ratingError || !ratingData ? 0 : ratingData.total_reviews || 0;
+        const avgRating = ratingError || !ratingData || ratingData.length === 0 
+          ? 0 
+          : ratingData[0].avg_rating || 0;
+          
+        const totalReviews = ratingError || !ratingData || ratingData.length === 0 
+          ? 0 
+          : ratingData[0].total_reviews || 0;
         
         return {
           id: item.id,
@@ -165,32 +170,37 @@ export async function fetchTeacherById(id: string) {
       throw error;
     }
 
-    // Fetch specialties using raw SQL to avoid type errors
+    // Fetch specialties using raw SQL query as a workaround for type issues
     const { data: specialtiesData, error: specialtiesError } = await supabase
       .rpc('execute_sql', {
         query_text: `SELECT specialty FROM teacher_specialties WHERE teacher_id = '${id}'`
-      });
+      }) as any;
     
     const specialties = specialtiesError || !specialtiesData 
       ? [] 
       : specialtiesData.map((s: any) => s.specialty);
     
-    // Fetch languages using raw SQL to avoid type errors
+    // Fetch languages using raw SQL query as a workaround for type issues
     const { data: languagesData, error: languagesError } = await supabase
       .rpc('execute_sql', {
         query_text: `SELECT language FROM teacher_languages WHERE teacher_id = '${id}'`
-      });
+      }) as any;
     
     const languages = languagesError || !languagesData 
       ? [] 
       : languagesData.map((l: any) => l.language);
     
-    // Fetch teacher rating
+    // Fetch teacher rating using the get_teacher_rating function
     const { data: ratingData, error: ratingError } = await supabase
-      .rpc('get_teacher_rating', { teacher_id: id });
+      .rpc('get_teacher_rating', { teacher_id: id }) as any;
     
-    const avgRating = ratingError || !ratingData ? 0 : ratingData.avg_rating || 0;
-    const totalReviews = ratingError || !ratingData ? 0 : ratingData.total_reviews || 0;
+    const avgRating = ratingError || !ratingData || ratingData.length === 0 
+      ? 0 
+      : ratingData[0].avg_rating || 0;
+      
+    const totalReviews = ratingError || !ratingData || ratingData.length === 0 
+      ? 0 
+      : ratingData[0].total_reviews || 0;
 
     const teacher: Teacher = {
       id: data.id,

@@ -394,6 +394,15 @@ export type Database = {
           description: string
         }[]
       }
+      get_teacher_rating: {
+        Args: {
+          teacher_id: string
+        }
+        Returns: {
+          avg_rating: number
+          total_reviews: number
+        }[]
+      }
     }
     Enums: {
       user_role: "student" | "teacher" | "admin"
