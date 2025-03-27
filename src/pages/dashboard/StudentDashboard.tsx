@@ -10,6 +10,7 @@ import { WalletCard } from '@/components/student-dashboard/WalletCard';
 import { QuickActionsCard } from '@/components/student-dashboard/QuickActionsCard';
 import { UpcomingLessonsSection } from '@/components/student-dashboard/UpcomingLessonsSection';
 import { ReviewsSection } from '@/components/student-dashboard/ReviewsSection';
+import { LearningGoalsSection } from '@/components/student-dashboard/LearningGoalsSection';
 
 export default function StudentDashboard() {
   const { user, profile } = useAuth();
@@ -61,7 +62,10 @@ export default function StudentDashboard() {
           <QuickActionsCard />
         </div>
         
-        {/* Learning Goals Section - handled inside ProgressSection */}
+        {/* Learning Goals Section */}
+        <div className="mb-8">
+          <LearningGoalsSection />
+        </div>
         
         {/* Upcoming Lessons Section */}
         <UpcomingLessonsSection lessons={upcomingLessons} isLoading={lessonsLoading} />

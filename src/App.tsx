@@ -23,6 +23,7 @@ import BookingPage from "./pages/BookingPage";
 import BookingPaymentPage from "./pages/BookingPaymentPage";
 import MessagesPage from "./pages/MessagesPage";
 import MessageDetailPage from "./pages/MessageDetailPage";
+import StudentLearningGoalsPage from "./pages/student/StudentLearningGoalsPage";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => (
             {/* Student Routes */}
             <Route element={<ProtectedRoute requiredRole="student" />}>
               <Route path="/student/dashboard" element={<StudentDashboard />} />
+              <Route path="/student/learning-goals" element={<StudentLearningGoalsPage />} />
             </Route>
             
             {/* Teacher Routes */}

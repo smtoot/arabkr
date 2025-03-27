@@ -1,5 +1,8 @@
 
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   Card, 
   CardContent, 
@@ -10,8 +13,9 @@ import {
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { GraduationCap } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { GraduationCap, Target } from 'lucide-react';
+import { fetchLearningGoals } from '@/services/api/student/learningGoalsService';
+import { LearningGoalCard } from './LearningGoalCard';
 
 interface ProgressSectionProps {
   firstName?: string;
@@ -19,20 +23,32 @@ interface ProgressSectionProps {
 
 export const ProgressSection = ({ firstName }: ProgressSectionProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [progressValue, setProgressValue] = useState(0);
+  
+  // Fetch learning goals
+  const { data: goals, isLoading: goalsLoading } = useQuery({
+    queryKey: ['learning-goals', user?.id],
+    queryFn: () => user?.id ? fetchLearningGoals(user.id) : Promise.resolve([]),
+    enabled: !!user?.id,
+  });
+  
+  // Calculate completed goals percentage
+  const completedGoalsPercentage = goals && goals.length > 0
+    ? Math.round((goals.filter(g => g.completed).length / goals.length) * 100)
+    : 0;
   
   // Simulate progress increase for demo purposes
   useEffect(() => {
-    const timer = setTimeout(() => setProgressValue(30), 500);
+    const timer = setTimeout(() => setProgressValue(completedGoalsPercentage || 30), 500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [completedGoalsPercentage]);
 
-  // Learning goals (would typically come from an API)
-  const learningGoals = [
-    { id: 1, title: "إتقان المحادثة الأساسية", progress: 45 },
-    { id: 2, title: "تعلم 500 كلمة شائعة", progress: 60 },
-    { id: 3, title: "إتقان النطق الصحيح", progress: 25 },
-  ];
+  // Get top 3 in-progress goals
+  const topInProgressGoals = goals
+    ?.filter(g => !g.completed)
+    .sort((a, b) => (b.current_value / b.target_value) - (a.current_value / a.target_value))
+    .slice(0, 3);
 
   return (
     <>
@@ -55,33 +71,40 @@ export const ProgressSection = ({ firstName }: ProgressSectionProps) => {
                 أتممت {progressValue}% من خطة التعلم الخاصة بك
               </p>
             </div>
+            
+            {!goalsLoading && topInProgressGoals && topInProgressGoals.length > 0 && (
+              <div className="border-t pt-3 mt-3">
+                <p className="text-sm font-medium mb-2 flex items-center gap-1">
+                  <Target className="h-4 w-4 text-primary" />
+                  أهدافك قيد التقدم
+                </p>
+                <div className="space-y-2">
+                  {topInProgressGoals.map(goal => {
+                    const progress = goal.target_value > 0 
+                      ? Math.min(100, (goal.current_value / goal.target_value) * 100) 
+                      : 0;
+                      
+                    return (
+                      <div key={goal.id} className="space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <p className="text-foreground font-medium truncate">{goal.title}</p>
+                          <p className="text-muted-foreground">{Math.round(progress)}%</p>
+                        </div>
+                        <Progress value={progress} className="h-1.5" />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
         <CardFooter>
-          <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/student/learning-plan')}>
-            عرض خطة التعلم الكاملة
+          <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/student/learning-goals')}>
+            عرض أهداف التعلم الكاملة
           </Button>
         </CardFooter>
       </Card>
-
-      <h2 className="text-xl font-semibold mb-4 mt-8">أهداف التعلم</h2>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-        {learningGoals.map((goal) => (
-          <Card key={goal.id}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">{goal.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Progress value={goal.progress} className="h-2" />
-                <p className="text-sm text-muted-foreground">
-                  {goal.progress}% مكتمل
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
     </>
   );
 };
