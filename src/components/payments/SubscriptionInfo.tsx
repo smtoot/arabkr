@@ -8,7 +8,7 @@ import { formatDate } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useState } from 'react';
-import { cancelSubscription } from '@/services/api/payment/paymentService';
+import { cancelSubscription } from '@/services/api/payment/subscriptionService';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 

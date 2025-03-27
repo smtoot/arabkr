@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -11,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { Loader2, CreditCard, Building, Wallet } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { addPaymentMethod } from '@/services/api/payment/paymentService';
+import { addPaymentMethod } from '@/services/api/payment/paymentMethodsService';
 
 export default function AddPaymentMethodPage() {
   const { user } = useAuth();

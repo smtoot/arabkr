@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { deletePaymentMethod, setDefaultPaymentMethod } from '@/services/api/payment/paymentService';
+import { deletePaymentMethod, setDefaultPaymentMethod } from '@/services/api/payment/paymentMethodsService';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import {
