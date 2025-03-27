@@ -6,16 +6,15 @@ import { LessonType } from "@/hooks/useBookingForm";
 export const fetchLessonTypes = async (): Promise<LessonType[]> => {
   // Use raw query since lesson_types isn't in the types yet
   const { data, error } = await supabase
-    .from('lesson_types')
-    .select('*')
-    .order('name');
+    .rpc('get_lesson_types')
+    .returns<LessonType[]>();
   
   if (error) {
     console.error('Error fetching lesson types:', error);
     throw error;
   }
   
-  return data as LessonType[];
+  return data || [];
 };
 
 // Fetch a teacher's availability
