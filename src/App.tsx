@@ -18,6 +18,7 @@ import StudentDashboard from "./pages/dashboard/StudentDashboard";
 import TeacherDashboard from "./pages/dashboard/TeacherDashboard";
 import TeachersPage from "./pages/TeachersPage";
 import TeacherDetailPage from "./pages/TeacherDetailPage";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,11 @@ const App = () => (
             {/* Teacher Routes */}
             <Route element={<ProtectedRoute requiredRole="teacher" />}>
               <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
+            </Route>
+            
+            {/* Admin Routes */}
+            <Route element={<ProtectedRoute requiredRole="admin" />}>
+              <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             </Route>
             
             {/* Catch All */}
