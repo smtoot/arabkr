@@ -46,8 +46,8 @@ export const WalletCard = ({ walletData, isLoading }: WalletCardProps) => {
         )}
       </CardContent>
       <CardFooter>
-        <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/wallet')}>
-          شحن الرصيد
+        <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/payment')}>
+          إدارة الرصيد
         </Button>
       </CardFooter>
     </Card>

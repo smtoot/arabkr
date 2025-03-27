@@ -24,6 +24,9 @@ import BookingPaymentPage from "./pages/BookingPaymentPage";
 import MessagesPage from "./pages/MessagesPage";
 import MessageDetailPage from "./pages/MessageDetailPage";
 import StudentLearningGoalsPage from "./pages/student/StudentLearningGoalsPage";
+import PaymentsPage from "./pages/payment/PaymentsPage";
+import CheckoutPage from "./pages/payment/CheckoutPage";
+import AddPaymentMethodPage from "./pages/payment/AddPaymentMethodPage";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +61,11 @@ const App = () => (
               {/* Messages Routes */}
               <Route path="/messages" element={<MessagesPage />} />
               <Route path="/messages/:userId" element={<MessageDetailPage />} />
+              
+              {/* Payment Routes */}
+              <Route path="/payment" element={<PaymentsPage />} />
+              <Route path="/payment/checkout" element={<CheckoutPage />} />
+              <Route path="/payment/add-method" element={<AddPaymentMethodPage />} />
             </Route>
             
             {/* Student Routes */}
