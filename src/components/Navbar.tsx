@@ -1,7 +1,6 @@
-
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Menu, X, LogIn, UserCircle, LogOut, Settings } from 'lucide-react';
+import { Menu, X, LogIn, UserCircle, LogOut, Settings, MessageSquare } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -13,10 +12,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { supabase } from '@/integrations/supabase/client';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -28,6 +30,57 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      const fetchUnreadCount = async () => {
+        const { data, error } = await supabase
+          .from('messages')
+          .select('id', { count: 'exact' })
+          .eq('recipient_id', user.id)
+          .eq('is_read', false);
+          
+        if (!error) {
+          setUnreadMessages(data?.length || 0);
+        }
+      };
+      
+      fetchUnreadCount();
+      
+      // Set up subscription for new messages
+      const channel = supabase
+        .channel('messages_channel')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `recipient_id=eq.${user.id}`
+          },
+          (payload) => {
+            setUnreadMessages(prev => prev + 1);
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'messages',
+            filter: `recipient_id=eq.${user.id}`
+          },
+          (payload) => {
+            fetchUnreadCount();
+          }
+        )
+        .subscribe();
+        
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     await signOut();
@@ -80,7 +133,6 @@ const Navbar = () => {
             </motion.div>
           </Link>
           
-          {/* Desktop Navigation */}
           <motion.ul 
             className="hidden md:flex space-x-8" 
             initial={{ opacity: 0 }}
@@ -93,7 +145,7 @@ const Navbar = () => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 * (index + 1) }}
-                className="ml-8 last:ml-0" // Right-to-left margin
+                className="ml-8 last:ml-0"
               >
                 <Link 
                   to={item.path} 
@@ -105,41 +157,65 @@ const Navbar = () => {
             ))}
           </motion.ul>
           
-          {/* Auth Buttons or User Menu */}
           <div className="hidden md:flex items-center">
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative rounded-full h-8 w-8 p-0">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={profile?.avatar_url} alt={getProfileName()} />
-                      <AvatarFallback>{getInitials()}</AvatarFallback>
-                    </Avatar>
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                <Link to="/messages">
+                  <Button variant="ghost" size="icon" className="relative">
+                    <MessageSquare className="h-5 w-5" />
+                    {unreadMessages > 0 && (
+                      <Badge 
+                        className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center"
+                        variant="destructive"
+                      >
+                        {unreadMessages > 9 ? '9+' : unreadMessages}
+                      </Badge>
+                    )}
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <div className="flex items-center justify-start gap-2 p-2">
-                    <div className="flex flex-col space-y-1 leading-none">
-                      <p className="font-medium">{getProfileName()}</p>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                </Link>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative rounded-full h-8 w-8 p-0">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={profile?.avatar_url} alt={getProfileName()} />
+                        <AvatarFallback>{getInitials()}</AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <div className="flex flex-col space-y-1 leading-none">
+                        <p className="font-medium">{getProfileName()}</p>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                      </div>
                     </div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
-                    <UserCircle className="ml-2 h-4 w-4" />
-                    <span>لوحة التحكم</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/settings')}>
-                    <Settings className="ml-2 h-4 w-4" />
-                    <span>الإعدادات</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="ml-2 h-4 w-4" />
-                    <span>تسجيل الخروج</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                      <UserCircle className="ml-2 h-4 w-4" />
+                      <span>لوحة التحكم</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/messages')}>
+                      <MessageSquare className="ml-2 h-4 w-4" />
+                      <span>الرسائل</span>
+                      {unreadMessages > 0 && (
+                        <Badge className="mr-auto" variant="destructive">
+                          {unreadMessages}
+                        </Badge>
+                      )}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/settings')}>
+                      <Settings className="ml-2 h-4 w-4" />
+                      <span>الإعدادات</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout}>
+                      <LogOut className="ml-2 h-4 w-4" />
+                      <span>تسجيل الخروج</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             ) : (
               <div className="flex space-x-4">
                 <Link to="/auth/login">
@@ -154,7 +230,6 @@ const Navbar = () => {
             )}
           </div>
           
-          {/* Mobile Menu Button */}
           <div className="md:hidden">
             <Button
               variant="ghost"
@@ -168,7 +243,6 @@ const Navbar = () => {
         </nav>
       </div>
       
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <motion.div 
           className="md:hidden absolute top-full left-0 right-0 bg-background border-b"
