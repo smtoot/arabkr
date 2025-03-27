@@ -5,3 +5,5 @@ export * from './lessonService';
 export * from './availabilityService';
 export * from './studentService';
 export * from './earningsService';
+export * from './teacherListingService';
+export * from './detailService';

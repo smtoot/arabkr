@@ -1,10 +1,13 @@
 
 // Re-export all teacher-related functions from their respective modules
 export { 
-  fetchTeachers, 
-  fetchTeacherById, 
+  fetchTeachers,
+  fetchTeacherById
+} from './teacher/index';
+
+export { 
   fetchTeacherAvailability 
-} from './teacherApi';
+} from './teacher/availabilityService';
 
 export { 
   fetchTeacherReviews 

@@ -2,19 +2,51 @@
 import { supabase } from "@/integrations/supabase/client";
 
 // Fetch teacher availability
-export async function fetchTeacherAvailability(teacherId: string) {
+export async function fetchTeacherAvailability(teacherId: string, startDate?: Date, endDate?: Date) {
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('availability')
       .select('*')
       .eq('teacher_id', teacherId);
+      
+    if (startDate && endDate) {
+      const startDateStr = startDate.toISOString();
+      const endDateStr = endDate.toISOString();
+      
+      const { data: bookingsData, error: bookingsError } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('teacher_id', teacherId)
+        .gte('start_time', startDateStr)
+        .lte('start_time', endDateStr)
+        .in('status', ['confirmed', 'pending']);
+      
+      if (bookingsError) {
+        console.error('Error fetching teacher bookings:', bookingsError);
+        throw bookingsError;
+      }
+      
+      const { data: availabilityData, error: availabilityError } = await query;
+      
+      if (availabilityError) {
+        console.error('Error fetching availability:', availabilityError);
+        throw availabilityError;
+      }
+      
+      return { 
+        availability: availabilityData || [], 
+        existingBookings: bookingsData || [] 
+      };
+    }
     
+    const { data, error } = await query;
+
     if (error) {
       console.error('Error fetching availability:', error);
       throw error;
     }
-    
-    return data || [];
+
+    return data;
   } catch (error) {
     console.error('Error in fetchTeacherAvailability:', error);
     throw error;
