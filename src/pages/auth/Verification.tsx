@@ -9,13 +9,24 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function Verification() {
   const [isResending, setIsResending] = useState(false);
+  const [email, setEmail] = useState('');
   const { toast } = useToast();
 
   const handleResendEmail = async () => {
+    if (!email) {
+      toast({
+        title: "يرجى إدخال البريد الإلكتروني",
+        description: "يرجى إدخال عنوان البريد الإلكتروني الذي استخدمته للتسجيل",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsResending(true);
       const { error } = await supabase.auth.resend({
         type: 'signup',
+        email: email,
       });
 
       if (error) {
@@ -58,17 +69,28 @@ export default function Verification() {
           </div>
           
           <p className="text-sm text-muted-foreground">
-            لم تستلم البريد الإلكتروني؟ تحقق من مجلد البريد غير المرغوب فيه أو
+            لم تستلم البريد الإلكتروني؟ تحقق من مجلد البريد غير المرغوب فيه أو أدخل بريدك الإلكتروني لإعادة الإرسال
           </p>
           
-          <Button 
-            variant="outline" 
-            className="w-full mt-1" 
-            onClick={handleResendEmail}
-            disabled={isResending}
-          >
-            {isResending ? "جارٍ إعادة الإرسال..." : "إعادة إرسال البريد الإلكتروني"}
-          </Button>
+          <div className="space-y-2">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="أدخل بريدك الإلكتروني"
+              className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              dir="rtl"
+            />
+            
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={handleResendEmail}
+              disabled={isResending}
+            >
+              {isResending ? "جارٍ إعادة الإرسال..." : "إعادة إرسال البريد الإلكتروني"}
+            </Button>
+          </div>
           
           <Link to="/auth/login">
             <Button variant="default" className="mt-4 w-full">
