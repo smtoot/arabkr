@@ -59,7 +59,7 @@ export default function TeacherVerification() {
   const { toast } = useToast();
 
   const { data: applications = [], isLoading, refetch } = useQuery({
-    queryKey: ['teacherApplications'],
+    queryKey: ['teacherApplications', statusFilter],
     queryFn: () => fetchTeacherApplications(statusFilter),
   });
 
@@ -148,6 +148,8 @@ export default function TeacherVerification() {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             onViewDetails={handleViewTeacher}
+            onApprove={handleApproveTeacher}
+            onReject={handleRejectClick}
             status="approved"
           />
         </TabsContent>
@@ -158,6 +160,8 @@ export default function TeacherVerification() {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             onViewDetails={handleViewTeacher}
+            onApprove={handleApproveTeacher}
+            onReject={handleRejectClick}
             status="rejected"
           />
         </TabsContent>

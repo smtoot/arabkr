@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { 
   Card, 
@@ -78,12 +77,15 @@ function HomepageContent() {
   const { data: content, isLoading, refetch } = useQuery({
     queryKey: ['homePageContent'],
     queryFn: fetchHomePageContent,
-    onSuccess: (data) => {
-      setHeroContent(data.hero);
-      setAboutContent(data.about);
-      setFeaturesContent(data.features);
-    }
   });
+
+  useEffect(() => {
+    if (content) {
+      setHeroContent(content.hero);
+      setAboutContent(content.about);
+      setFeaturesContent(content.features);
+    }
+  }, [content]);
 
   const handleSaveHero = async () => {
     setIsUploading(true);
@@ -285,7 +287,6 @@ function HomepageContent() {
         </CardContent>
       </Card>
 
-      {/* Edit Hero Dialog */}
       <Dialog open={showEditHero} onOpenChange={setShowEditHero}>
         <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -375,7 +376,6 @@ function HomepageContent() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit About Dialog */}
       <Dialog open={showEditAbout} onOpenChange={setShowEditAbout}>
         <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -457,7 +457,6 @@ function HomepageContent() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Features Dialog */}
       <Dialog open={showEditFeatures} onOpenChange={setShowEditFeatures}>
         <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -711,7 +710,6 @@ function FAQsContent() {
         )}
       </div>
 
-      {/* Add FAQ Dialog */}
       <Dialog open={showAddFAQ} onOpenChange={setShowAddFAQ}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -759,7 +757,6 @@ function FAQsContent() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit FAQ Dialog */}
       <Dialog open={showEditFAQ} onOpenChange={setShowEditFAQ}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
