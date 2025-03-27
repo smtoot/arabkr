@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Calendar as CalendarIcon, Clock, Plus, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -118,22 +117,23 @@ export default function TeacherAvailability({ teacherId }: TeacherAvailabilityPr
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <label htmlFor="day" className="text-right col-span-1">اليوم:</label>
-                <Select 
-                  value={newSlot.day_of_week.toString()} 
-                  onValueChange={(value) => setNewSlot({...newSlot, day_of_week: parseInt(value)})}
-                  className="col-span-3"
-                >
-                  <SelectTrigger id="day">
-                    <SelectValue placeholder="اختر يومًا" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {daysOfWeek.map((day) => (
-                      <SelectItem key={day.id} value={day.id.toString()}>
-                        {day.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="col-span-3">
+                  <Select 
+                    value={newSlot.day_of_week.toString()} 
+                    onValueChange={(value) => setNewSlot({...newSlot, day_of_week: parseInt(value)})}
+                  >
+                    <SelectTrigger id="day">
+                      <SelectValue placeholder="اختر يومًا" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {daysOfWeek.map((day) => (
+                        <SelectItem key={day.id} value={day.id.toString()}>
+                          {day.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               
               <div className="grid grid-cols-4 items-center gap-4">
@@ -186,7 +186,7 @@ export default function TeacherAvailability({ teacherId }: TeacherAvailabilityPr
         <Card className="md:col-span-7">
           <CardHeader>
             <CardTitle>أوقات الإتاحة الأسبوعية</CardTitle>
-            <CardDescription>الأوقات التي حددتها للدروس كل أسبوع</CardDescription>
+            <CardDescription>الأوقات التي حددتها ل��دروس كل أسبوع</CardDescription>
           </CardHeader>
           <CardContent>
             {availability.length === 0 ? (
