@@ -70,7 +70,7 @@ export async function fetchTeachers(
 
     const teachersWithDetails = await Promise.all(
       data.map(async (item: any) => {
-        // Fetch specialties using raw SQL query as a workaround for type issues
+        // Using type assertion to handle the execute_sql RPC call
         const { data: specialtiesData, error: specialtiesError } = await supabase
           .rpc('execute_sql', {
             query_text: `SELECT specialty FROM teacher_specialties WHERE teacher_id = '${item.id}'`
@@ -80,7 +80,7 @@ export async function fetchTeachers(
           ? [] 
           : specialtiesData.map((s: any) => s.specialty);
         
-        // Fetch languages using raw SQL query as a workaround for type issues
+        // Using type assertion to handle the execute_sql RPC call
         const { data: languagesData, error: languagesError } = await supabase
           .rpc('execute_sql', {
             query_text: `SELECT language FROM teacher_languages WHERE teacher_id = '${item.id}'`
@@ -90,7 +90,7 @@ export async function fetchTeachers(
           ? [] 
           : languagesData.map((l: any) => l.language);
         
-        // Fetch teacher rating using the get_teacher_rating function
+        // Using the get_teacher_rating function
         const { data: ratingData, error: ratingError } = await supabase
           .rpc('get_teacher_rating', { teacher_id: item.id }) as any;
         
@@ -170,7 +170,7 @@ export async function fetchTeacherById(id: string) {
       throw error;
     }
 
-    // Fetch specialties using raw SQL query as a workaround for type issues
+    // Using type assertion to handle the execute_sql RPC call
     const { data: specialtiesData, error: specialtiesError } = await supabase
       .rpc('execute_sql', {
         query_text: `SELECT specialty FROM teacher_specialties WHERE teacher_id = '${id}'`
@@ -180,7 +180,7 @@ export async function fetchTeacherById(id: string) {
       ? [] 
       : specialtiesData.map((s: any) => s.specialty);
     
-    // Fetch languages using raw SQL query as a workaround for type issues
+    // Using type assertion to handle the execute_sql RPC call
     const { data: languagesData, error: languagesError } = await supabase
       .rpc('execute_sql', {
         query_text: `SELECT language FROM teacher_languages WHERE teacher_id = '${id}'`
@@ -190,7 +190,7 @@ export async function fetchTeacherById(id: string) {
       ? [] 
       : languagesData.map((l: any) => l.language);
     
-    // Fetch teacher rating using the get_teacher_rating function
+    // Using the get_teacher_rating function
     const { data: ratingData, error: ratingError } = await supabase
       .rpc('get_teacher_rating', { teacher_id: id }) as any;
     

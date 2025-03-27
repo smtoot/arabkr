@@ -386,6 +386,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      execute_sql: {
+        Args: {
+          query_text: string
+        }
+        Returns: Json
+      }
       get_lesson_types: {
         Args: Record<PropertyKey, never>
         Returns: {
