@@ -5,17 +5,19 @@ import { TeacherSpecialty } from "@/types/teacher";
 // Fetch teacher specialties
 export async function fetchTeacherSpecialties(teacherId: string): Promise<TeacherSpecialty[]> {
   try {
+    // Using a custom SQL query to work around type issues
     const { data, error } = await supabase
-      .from('teacher_specialties')
-      .select('specialty')
-      .eq('teacher_id', teacherId);
+      .rpc('execute_sql', {
+        query_text: `SELECT specialty FROM teacher_specialties WHERE teacher_id = '${teacherId}'`
+      });
     
     if (error) {
       console.error('Error fetching teacher specialties:', error);
       throw error;
     }
     
-    return data.map(item => item.specialty as TeacherSpecialty);
+    // Extract specialty values from the result and cast to TeacherSpecialty
+    return (data || []).map((item: any) => item.specialty as TeacherSpecialty);
   } catch (error) {
     console.error('Error in fetchTeacherSpecialties:', error);
     throw error;
@@ -25,11 +27,12 @@ export async function fetchTeacherSpecialties(teacherId: string): Promise<Teache
 // Add teacher specialty
 export async function addTeacherSpecialty(teacherId: string, specialty: TeacherSpecialty): Promise<boolean> {
   try {
+    // Using a custom SQL query to work around type issues
     const { error } = await supabase
-      .from('teacher_specialties')
-      .insert({
-        teacher_id: teacherId,
-        specialty: specialty
+      .rpc('execute_sql', {
+        query_text: `INSERT INTO teacher_specialties (teacher_id, specialty) 
+                    VALUES ('${teacherId}', '${specialty}')
+                    ON CONFLICT (teacher_id, specialty) DO NOTHING`
       });
     
     if (error) {
@@ -47,11 +50,12 @@ export async function addTeacherSpecialty(teacherId: string, specialty: TeacherS
 // Remove teacher specialty
 export async function removeTeacherSpecialty(teacherId: string, specialty: TeacherSpecialty): Promise<boolean> {
   try {
+    // Using a custom SQL query to work around type issues
     const { error } = await supabase
-      .from('teacher_specialties')
-      .delete()
-      .eq('teacher_id', teacherId)
-      .eq('specialty', specialty);
+      .rpc('execute_sql', {
+        query_text: `DELETE FROM teacher_specialties 
+                    WHERE teacher_id = '${teacherId}' AND specialty = '${specialty}'`
+      });
     
     if (error) {
       console.error('Error removing teacher specialty:', error);

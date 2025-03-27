@@ -31,9 +31,12 @@ export {
 } from './teacher/languagesService';
 
 export {
-  updateTeacherProfileComplete,
-  uploadProfilePicture
+  updateTeacherProfileComplete
 } from './teacher/profileManagementService';
+
+export { 
+  uploadProfilePicture
+} from './teacher/profileService';
 
 export { 
   generateMockTeachers, 
